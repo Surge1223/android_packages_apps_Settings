@@ -34,4 +34,13 @@
 
     <!-- For a menu item allowing users to edit a SIM display name -->
     <item type="id" name="edit_sim_name" />
+    <item type="id" name="content_container">false</item>
+    <item type="id" name="header_content_container">false</item>
+    <item type="id" name="current_score">false</item>
+    <item type="id" name="play_view">false</item>
+    <item type="id" name="game_view">false</item>
+    <item type="id" name="assist_gesture_training_check">false</item>
+    <item type="id" name="summary_text">false</item>
+    <item type="id" name="error_message">false</item>
+
 </resources>
