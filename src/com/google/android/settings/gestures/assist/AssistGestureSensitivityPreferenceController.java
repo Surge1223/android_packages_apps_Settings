@@ -66,10 +66,11 @@ public class AssistGestureSensitivityPreferenceController extends AbstractPrefer
         }
     }
 
-    class SettingObserver extends ContentObserver {
-        private final Uri ASSIST_GESTURE_ENABLED_URI = Secure.getUriFor("assist_gesture_enabled");
-        private final Uri ASSIST_GESTURE_SENSITIVITY_URI = Secure.getUriFor("assist_gesture_sensitivity");
-        private final Uri ASSIST_GESTURE_SILENCE_PHONE_ENABLED_URI = Secure.getUriFor("assist_gesture_silence_alerts_enabled");
+  public static int getMaxSensitivityResourceInteger(Context context) {
+    int maximum = 8;
+//    maximum = context.getResources().getInteger(R.integer.gesture_assist_sensitivity_max);
+    return maximum;
+  }
 
         SettingObserver() {
             super(AssistGestureSensitivityPreferenceController.this.mHandler);

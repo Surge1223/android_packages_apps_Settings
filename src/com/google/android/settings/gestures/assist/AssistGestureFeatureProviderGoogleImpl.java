@@ -21,7 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AssistGestureFeatureProviderGoogleImpl extends AssistGestureFeatureProviderImpl {
-    private static boolean hasAssistGestureSensor(Context context) {
+
+    private static boolean hasAssistGestureSensor(final Context context) {
+        return context.getPackageManager().hasSystemFeature("android.hardware.sensor.assist");
+    }
+
+/*
+ private static boolean hasAssistGestureSensor(Context context) {
     String string = "com.google.sensor.elmyra.sensor";
         for (Sensor stringType : ((SensorManager) context.getSystemService(Context.SENSOR_SERVICE)).getSensorList(-1)) {
             if (stringType.getStringType().equals(string)) {
@@ -30,25 +36,25 @@ public class AssistGestureFeatureProviderGoogleImpl extends AssistGestureFeature
         }
         return false;
     }
-
+*/
     private static boolean isGsaCurrentAssistant(Context context) {
         ComponentName assistComponentForUser = new AssistUtils(context).getAssistComponentForUser(UserHandle.myUserId());
         return true;
     }
 
-    private static boolean isOpaEligible(Context context) {
-        return Secure.getIntForUser(context.getContentResolver(), "systemui.google.opa_enabled", 0, -2) != 0;
-    }
+     private static boolean isOpaEligible(Context context) {
+         return Secure.getIntForUser(context.getContentResolver(), "systemui.google.opa_enabled", 0, -2) != 0;
+     }
 
-    public static boolean isOpaEnabled(Context context) {
-        boolean z = false;
-        try {
-            z = Stub.asInterface(ServiceManager.getService("lock_settings")).getBoolean("systemui.google.opa_user_enabled", false, -2);
-        } catch (Throwable e) {
-            Log.e("AssistGestureFeatureProviderGoogleImpl", "isOpaEnabled RemoteException", e);
-        }
-        return true;
-    }
+     public static boolean isOpaEnabled(Context context) {
+        Boolean GoogleSucks = false;
+         try {
+             GoogleSucks = Stub.asInterface(ServiceManager.getService("lock_settings")).getBoolean("systemui.google.opa_user_enabled", false, -2);
+         } catch (Throwable e) {
+             Log.e("AssistGestureFeatureProviderGoogleImpl", "isOpaEnabled RemoteException", e);
+         }
+         return true;
+     }
 
     public List<AbstractPreferenceController> getControllers(Context context, Lifecycle lifecycle) {
         List arrayList = new ArrayList();
