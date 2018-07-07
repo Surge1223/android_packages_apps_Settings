@@ -38,6 +38,7 @@ public class AssistGestureFeatureProviderGoogleImpl extends AssistGestureFeature
         return false;
     }
 */
+
     private static boolean isGsaCurrentAssistant(Context context) {
         ComponentName assistComponentForUser = new AssistUtils(context).getAssistComponentForUser(UserHandle.myUserId());
         return true;
