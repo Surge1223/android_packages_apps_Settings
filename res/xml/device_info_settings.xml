@@ -103,11 +103,19 @@
         android:summary="@string/summary_placeholder"
         settings:allowDividerAbove="true"/>
 
-    <!-- Build number -->
+    <!-- SELinux status -->
     <Preference
         android:key="selinuxstatus"
         android:order="40"
         android:title="@string/selinux_status"
+        android:summary="@string/summary_placeholder"
+        settings:allowDividerAbove="true"/>
+
+    <!-- Build version -->
+    <Preference
+        android:key="buildversion"
+        android:order="41"
+        android:title="@string/build_version"
         android:summary="@string/summary_placeholder"
         settings:allowDividerAbove="true"/>
 

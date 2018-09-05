@@ -157,6 +157,14 @@
         android:summary="@string/summary_placeholder"
         settings:allowDividerAbove="true"/>
 
+    <!-- Build version -->
+    <Preference
+        android:key="buildversion"
+        android:order="45"
+        android:title="@string/build_version"
+        android:summary="@string/summary_placeholder"
+        settings:allowDividerAbove="true"/>
+
     <!-- SELinux status information -->
     <Preference
         android:key="selinuxstatus"

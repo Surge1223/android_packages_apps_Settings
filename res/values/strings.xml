@@ -2789,6 +2789,8 @@
     <string name="build_bootimage_fingerprint">Build</string>
     <!-- About phone screen,  setting option name  [CHAR LIMIT=40] -->
     <string name="selinux_status">SELinux status</string>
+    <!-- About phone screen,  setting option name  [CHAR LIMIT=40] -->
+    <string name="build_version">Build version</string>
 
     <!-- About phone screen, show when a value of some status item is unavailable. -->
     <string name="device_info_not_available">Not available</string>

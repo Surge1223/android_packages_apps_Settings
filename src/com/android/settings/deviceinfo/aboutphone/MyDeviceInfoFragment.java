@@ -50,6 +50,7 @@ import com.android.settings.deviceinfo.ROMVersionPreferenceController;
 import com.android.settings.deviceinfo.SafetyInfoPreferenceController;
 import com.android.settings.deviceinfo.UpTimePreferenceController;
 import com.android.settings.deviceinfo.SELinuxPreferenceController;
+import com.android.settings.deviceinfo.BuildVersionPreferenceController;
 import com.android.settings.deviceinfo.WifiMacAddressPreferenceController;
 import com.android.settings.deviceinfo.firmwareversion.FirmwareVersionPreferenceController;
 import com.android.settings.deviceinfo.imei.ImeiInfoPreferenceController;
@@ -128,6 +129,7 @@ public class MyDeviceInfoFragment extends DashboardFragment
         controllers.add(new FccEquipmentIdPreferenceController(context));
         controllers.add(new ROMVersionPreferenceController(context));
         controllers.add(new SELinuxPreferenceController(context));
+        controllers.add(new BuildVersionPreferenceController(context));
         controllers.add(
                 new BuildNumberPreferenceController(context, activity, fragment, lifecycle));
         controllers.add(new UpTimePreferenceController(context));
