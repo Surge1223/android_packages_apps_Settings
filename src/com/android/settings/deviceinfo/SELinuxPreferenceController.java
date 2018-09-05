@@ -46,12 +46,20 @@ public class SELinuxPreferenceController extends AbstractPreferenceController
         return KEY_SELINUX_STATUS;
     }
 
+    private String getenforce() {
+        String value = SystemProperties.get(PROPERTY_SELINUX_STATUS);
+        String status = "unknown";
+        if (value != null) {
+            return value;
+        }
+        return status;
+    }
+
     @Override
     public void displayPreference(PreferenceScreen screen) {
         super.displayPreference(screen);
         final Preference pref = screen.findPreference(KEY_SELINUX_STATUS);
         if (pref == null) return;
-        String version = SystemProperties.get(PROPERTY_SELINUX_STATUS);
-        pref.setSummary(version);
+        pref.setSummary(getenforce());
     }
 }
