@@ -1,8 +1,9 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:androidprv="http://schemas.android.com/apk/prv/res/android"
-        package="com.android.settings"
-        coreApp="true"
-        android:sharedUserId="android.uid.system">
+<manifest xmlns:androidprv="http://schemas.android.com/apk/prv/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.android.settings"
+    coreApp="true"
+    android:sharedUserId="android.uid.system">
 
     <original-package android:name="com.android.settings" />
 
@@ -103,6 +104,7 @@
     <uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
 
     <application android:label="@string/settings_label"
+             tools:replace="android:appComponentFactory"
             android:icon="@drawable/ic_launcher_settings"
             android:theme="@style/Theme.Settings"
             android:hardwareAccelerated="true"
@@ -3275,5 +3277,23 @@
         </activity>
 
         <!-- This is the longest AndroidManifest.xml ever. -->
+
+        <!-- Start of our manifest entries -->
+
+        <!-- DU-Tweaks -->
+        <activity android:name=".Settings$DirtyTweaksActivity"
+                  android:label="@string/dirtytweaks_title"
+                  android:icon="@drawable/ic_settings_dirtytweaks">
+            <intent-filter android:priority="10">
+                <action android:name="com.android.settings.action.SETTINGS"/>
+            </intent-filter>
+            <meta-data android:name="com.android.settings.category"
+                       android:value="com.android.settings.category.ia.homepage"/>
+            <meta-data android:name="com.android.settings.FRAGMENT_CLASS"
+                       android:value="com.dirtyunicorns.tweaks.DirtyTweaks"/>
+            <meta-data android:name="com.android.settings.summary"
+                       android:resource="@string/dirtytweaks_summary"/>
+        </activity>
+
     </application>
 </manifest>
