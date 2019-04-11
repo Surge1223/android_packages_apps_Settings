@@ -105,7 +105,7 @@
 
     <!-- SELinux status -->
     <Preference
-        android:key="selinuxstatus"
+        android:key="selinux_status"
         android:order="40"
         android:title="@string/selinux_status"
         android:summary="@string/summary_placeholder"

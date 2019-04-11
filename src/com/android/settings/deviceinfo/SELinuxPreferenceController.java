@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2018 The Android Open Source Project
  *
@@ -21,7 +22,7 @@ import android.os.SystemProperties;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceScreen;
 import android.text.TextUtils;
-
+import android.os.SELinux;
 import com.android.settings.R;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settingslib.core.AbstractPreferenceController;
@@ -29,8 +30,8 @@ import com.android.settingslib.core.AbstractPreferenceController;
 public class SELinuxPreferenceController extends AbstractPreferenceController
         implements PreferenceControllerMixin {
 
-    private static final String PROPERTY_SELINUX_STATUS = "ro.boot.selinux";
-    private static final String KEY_SELINUX_STATUS = "selinuxstatus";
+    private static final String PROPERTY_SELINUX_STATUS = "ro.build.selinux";
+    private static final String KEY_SELINUX_STATUS = "selinux_status";
 
     public SELinuxPreferenceController(Context context) {
         super(context);
@@ -46,20 +47,17 @@ public class SELinuxPreferenceController extends AbstractPreferenceController
         return KEY_SELINUX_STATUS;
     }
 
-    private String getenforce() {
-        String value = SystemProperties.get(PROPERTY_SELINUX_STATUS);
-        String status = "unknown";
-        if (value != null) {
-            return value;
-        }
-        return status;
-    }
-
     @Override
     public void displayPreference(PreferenceScreen screen) {
         super.displayPreference(screen);
         final Preference pref = screen.findPreference(KEY_SELINUX_STATUS);
         if (pref == null) return;
-        pref.setSummary(getenforce());
+        String status = "Unknown";
+        if (!SELinux.isSELinuxEnforced()) {
+            status = "Permissive";
+        } else {
+            status = "Enforcing";
+        }
+        pref.setSummary(status);
     }
 }
