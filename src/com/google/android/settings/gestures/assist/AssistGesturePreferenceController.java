@@ -30,7 +30,7 @@ public class AssistGesturePreferenceController extends GesturePreferenceControll
     private void updatePreference() {
         if (this.mPreference != null && this.mScreen != null) {
             if (!isAvailable()) {
-                removePreference(this.mScreen, getPreferenceKey());
+//                removePreference(this.mScreen, getPreferenceKey());
             } else if (this.mScreen.findPreference(getPreferenceKey()) == null) {
                 this.mScreen.addPreference(this.mPreference);
             }
@@ -41,6 +41,11 @@ public class AssistGesturePreferenceController extends GesturePreferenceControll
         this.mScreen = preferenceScreen;
         this.mPreference = preferenceScreen.findPreference(getPreferenceKey());
         super.displayPreference(preferenceScreen);
+    }
+
+    @Override
+    public int getAvailabilityStatus() {
+        return 0;
     }
 
     public String getPreferenceKey() {
@@ -57,6 +62,16 @@ public class AssistGesturePreferenceController extends GesturePreferenceControll
 
     protected boolean isSwitchPrefEnabled() {
         return Secure.getInt(this.mContext.getContentResolver(), "assist_gesture_enabled", 1) != 0;
+    }
+
+    @Override
+    public boolean isChecked() {
+        return false;
+    }
+
+    @Override
+    public boolean setChecked(boolean isChecked) {
+        return false;
     }
 
     public boolean onPreferenceChange(Preference preference, Object obj) {

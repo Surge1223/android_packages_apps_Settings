@@ -122,6 +122,7 @@ public class AssistGestureHelper {
     public void bindToElmyraServiceProxy() {
         if (this.mService == null) {
             try {
+                Log.d("AssistGestureHelper", "Attempting to bind to ElmyraService");
                 Intent intent = new Intent();
                 intent.setComponent(new ComponentName("com.android.systemui", "com.google.android.systemui.elmyra.ElmyraServiceProxy"));
                 this.mContext.bindServiceAsUser(intent, this.mServiceConnection, 1, UserHandle.getUserHandleForUid(0));
