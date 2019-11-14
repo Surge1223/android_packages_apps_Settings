@@ -11440,5 +11440,6 @@ Learn more about Quick Gestures in Pixel Tips."</string>
     <string name="dock_summary_charging_phone">Charging phone</string>
 
     <string name="dialog_aware_settings_title">Turn off Motion Sense?</string>
+    <string name="dialog_aware_settings_message">If you turn off Motion Sense, you can’t use Quick Gestures, show display when nearby, and reach to check phone</string>
 
 </resources>

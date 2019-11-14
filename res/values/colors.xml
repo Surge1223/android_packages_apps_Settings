@@ -164,4 +164,7 @@
     <color name="hats_lib_survey_white_shape_focused_color">#ff848484</color>
     <color name="hats_lib_survey_white_shape_pressed_color">#ffeeeeee</color>
     <color name="hats_lib_white_100">#ffffffff</color>
+
+     <color name="active_edge_indicator">#ff4182ef</color>
+
 </resources>
