@@ -11,142 +11,124 @@ import android.os.RemoteException;
 import android.os.SystemClock;
 import android.os.UserHandle;
 import android.util.Log;
-
 import com.google.android.systemui.elmyra.IElmyraService;
 import com.google.android.systemui.elmyra.IElmyraServiceGestureListener;
-import com.google.android.systemui.elmyra.IElmyraServiceSettingsListener;
-
-import static android.os.Binder.getCallingPid;
-import static android.os.Binder.getCallingUid;
 
 public class AssistGestureHelper {
-  private boolean mBoundToService;
-  private Context mContext;
-  private IElmyraServiceSettingsListener mElmyraServiceSettingsListener;
-  private IElmyraServiceGestureListener mElmyraServiceGestureListener;
-  private GestureListener mGestureListener;
-  private PowerManager mPowerManager;
-  private IElmyraService mService;
-  private ServiceConnection mServiceConnection;
-  private IBinder mToken;
-  private static String LOG_TAG = "AssistGestureElmyra";
+    private boolean mBoundToService;
+    private Context mContext;
+    public final IElmyraServiceGestureListener mElmyraServiceGestureListener = new C15772();
+    public GestureListener mGestureListener;
+    public PowerManager mPowerManager;
+    public IElmyraService mService;
+    private final ServiceConnection mServiceConnection = new C15761();
+    public IBinder mToken = new Binder();
 
-  public AssistGestureHelper(Context mContext) {
-    mToken = new Binder();
-    mServiceConnection =
-        new ServiceConnection() {
-          public void onServiceConnected(ComponentName componentName, IBinder binder) {
-            mService = IElmyraService.Stub.asInterface(binder);
-            if (mGestureListener == null) {
-              return;
+    class C15761 implements ServiceConnection {
+        C15761() {
+        }
+
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            IElmyraService unused = AssistGestureHelper.this.mService = IElmyraService.Stub.asInterface(iBinder);
+            if (AssistGestureHelper.this.mGestureListener != null) {
+                try {
+                    AssistGestureHelper.this.mService.registerGestureListener(AssistGestureHelper.this.mToken,
+                            (IBinder) AssistGestureHelper.this.mElmyraServiceGestureListener);
+                } catch (RemoteException e) {
+                    Log.e("AssistGestureHelper", "registerGestureListener()", e);
+                }
             }
+        }
+
+        public void onServiceDisconnected(ComponentName componentName) {
+            IElmyraService unused = AssistGestureHelper.this.mService = null;
+        }
+    }
+
+    class C15772 extends IElmyraServiceGestureListener.Stub {
+        private int mLastStage = 0;
+
+        C15772() {
+        }
+
+        public void onGestureProgress(float f, int i) throws RemoteException {
+            if (AssistGestureHelper.this.mGestureListener != null) {
+                AssistGestureHelper.this.mGestureListener.onGestureProgress(f, i);
+            }
+            if (this.mLastStage != 2 && i == 2) {
+                AssistGestureHelper.this.mPowerManager.userActivity(SystemClock.uptimeMillis(), 0, 0);
+            }
+            this.mLastStage = i;
+        }
+
+        public void onGestureDetected() throws RemoteException {
+            if (AssistGestureHelper.this.mGestureListener != null) {
+                AssistGestureHelper.this.mGestureListener.onGestureDetected();
+            }
+        }
+    }
+
+    public interface GestureListener {
+        void onGestureDetected();
+
+        void onGestureProgress(float f, int i);
+    }
+
+    public AssistGestureHelper(Context context) {
+        this.mContext = context;
+        this.mPowerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+    }
+
+    public void setListener(GestureListener gestureListener) {
+        this.mGestureListener = gestureListener;
+        IElmyraService iElmyraService = this.mService;
+        if (iElmyraService == null) {
+            Log.w("AssistGestureHelper", "Service is null, should try to reconnect");
+        } else if (gestureListener != null) {
             try {
-              mService.registerSettingsListener(mToken, (IBinder) mElmyraServiceSettingsListener);
-            } catch (RemoteException ex) {
-              Log.e("AssistGestureHelper", "registerSettingsListener()", (Throwable) ex);
+                iElmyraService.registerGestureListener(this.mToken, (IBinder) this.mElmyraServiceGestureListener);
+            } catch (RemoteException e) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("Failed to ");
+                sb.append(gestureListener == null ? "unregister" : "register");
+                sb.append(" listener");
+                Log.e("AssistGestureHelper", sb.toString(), e);
             }
-          }
+        } else {
+            try {
+                Log.d("AssistGestureHelper", "Attempting to register GestureListener");
+                iElmyraService.registerGestureListener(this.mToken, (IBinder) null);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-          public void onServiceDisconnected(ComponentName componentName) {
-            mService = null;
-          }
-        };
-    mElmyraServiceSettingsListener =
-        new IElmyraServiceSettingsListener.Stub() {
-          private int mLastStage = 0;
+    public void launchAssistant() {
+        try {
+            this.mService.triggerAction();
+        } catch (RemoteException e) {
+            Log.e("AssistGestureHelper", "Error invoking triggerAction()", e);
+        }
+    }
 
-          public void onGestureDetected() throws RemoteException {
-            if (AssistGestureHelper.this.mGestureListener != null) {
-              AssistGestureHelper.this.mGestureListener.onGestureDetected();
-            }
-          }
-
-          public void onGestureProgress(final float n, final int mLastStage)
-              throws RemoteException {
-            if (AssistGestureHelper.this.mGestureListener != null) {
-              AssistGestureHelper.this.mGestureListener.onGestureProgress(n, mLastStage);
-            }
-            if (this.mLastStage != 2 && mLastStage == 2) {
-              AssistGestureHelper.this.mPowerManager.userActivity(SystemClock.uptimeMillis(), 0, 0);
-            }
-            this.mLastStage = mLastStage;
-          }
-        };
-    this.mContext = mContext;
-    this.mPowerManager = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
-  }
+    public void unbindFromElmyraServiceProxy() {
+        if (this.mBoundToService) {
+            this.mContext.unbindService(this.mServiceConnection);
+            this.mBoundToService = false;
+        }
+    }
 
     public void bindToElmyraServiceProxy() {
-        if (this.mService != null) {
-            return;
-        }
-        try {
-            Intent intent = new Intent();
-            intent.setComponent(new ComponentName("com.android.systemui", "com.google.android.systemui.elmyra.ElmyraServiceProxy"));
-            this.mContext.bindServiceAsUser(intent, this.mServiceConnection, Context.BIND_AUTO_CREATE, UserHandle.getUserHandleForUid(0));
-            Log.d(LOG_TAG, "Starting service: " + intent);
-            Log.i(LOG_TAG, " caller's uid " + getCallingUid()
-                    + ", pid " + getCallingPid());
-            mContext.startService(intent);
-            this.mBoundToService = true;
-        }
-        catch (SecurityException ex) {
-            Log.e("AssistGestureHelper", "Unable to bind to ElmyraService", ex);
+        if (this.mService == null) {
+            try {
+                Intent intent = new Intent();
+                intent.setComponent(new ComponentName("com.android.systemui", "com.google.android.systemui.elmyra.ElmyraServiceProxy"));
+                this.mContext.bindServiceAsUser(intent, this.mServiceConnection, 1, UserHandle.getUserHandleForUid(0));
+                this.mBoundToService = true;
+            } catch (SecurityException e) {
+                Log.e("AssistGestureHelper", "Unable to bind to ElmyraService", e);
+            }
         }
     }
-
-  public void launchAssistant() {
-    try {
-      mService.launchAssistant();
-    } catch (RemoteException ex) {
-      Log.e("AssistGestureHelper", "launchAssistant()", (Throwable) ex);
-    }
-  }
-
-  public void setListener(GestureListener mGestureListener) {
-    this.mGestureListener = mGestureListener;
-    if (this.mService == null) {
-      Log.w("AssistGestureHelper", "Service is null, should try to reconnect");
-      return;
-    }
-    while (true) {
-      if (this.mGestureListener != null) {
-        try {
-          mService.registerSettingsListener(mToken, (IBinder) mElmyraServiceSettingsListener);
-        } catch (RemoteException ex) {
-          final StringBuilder sb = new StringBuilder();
-          sb.append("Failed to ");
-          String s;
-          if (this.mGestureListener == null) {
-            s = "unregister";
-          } else {
-            s = "register";
-          }
-          sb.append(s);
-          sb.append(" listener");
-          Log.e("AssistGestureHelper", sb.toString(), ex);
-          try {
-            mService.registerSettingsListener(this.mToken, null);
-          } catch (RemoteException e) {
-            e.printStackTrace();
-          }
-        }
-        return;
-      }
-    }
-  }
-
-  public void unbindFromElmyraServiceProxy() {
-    if (this.mBoundToService) {
-      this.mContext.unbindService(this.mServiceConnection);
-      this.mBoundToService = false;
-    }
-  }
-
-  public interface GestureListener {
-    void onGestureDetected();
-
-    void onGestureProgress(final float p0, final int p1);
-  }
 }
-

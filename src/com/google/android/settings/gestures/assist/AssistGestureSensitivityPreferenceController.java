@@ -1,60 +1,249 @@
 package com.google.android.settings.gestures.assist;
 
+import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
+import android.database.ContentObserver;
+import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemClock;
+import android.os.UserHandle;
+import android.os.UserManager;
 import android.provider.Settings;
 import android.text.TextUtils;
-
+import android.util.Log;
+import android.view.WindowManager;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceScreen;
-
 import com.android.settings.R;
+import com.android.settings.core.SliderPreferenceController;
 import com.android.settings.gestures.AssistGestureFeatureProvider;
-import com.android.settings.gestures.GesturePreferenceController;
 import com.android.settings.overlay.FeatureFactory;
+import com.android.settings.widget.SeekBarPreference;
+import com.android.settingslib.RestrictedLockUtils;
+import com.android.settingslib.RestrictedLockUtilsInternal;
+import com.android.settingslib.core.lifecycle.LifecycleObserver;
+import com.android.settingslib.core.lifecycle.events.OnPause;
+import com.android.settingslib.core.lifecycle.events.OnResume;
+import com.google.android.settings.gestures.assist.AssistGestureHelper;
+import com.google.android.settings.gestures.assist.bubble.AssistGestureBubbleActivity;
 
-public class AssistGestureSilenceAlertsPreferenceController extends GesturePreferenceController {
-    private static final String ASSIST_GESTURE_SILENCE_ALERTS_PREF_KEY = "gesture_assist_silence";
-    private static final String PREF_KEY_VIDEO = "gesture_assist_video";
-    private final AssistGestureFeatureProvider mFeatureProvider;
+public class AssistGestureSensitivityPreferenceController extends SliderPreferenceController implements LifecycleObserver, OnPause, OnResume {
+    public static float DEFAULT_SENSITIVITY = 0.5f;
+    private static String PREF_KEY_VIDEO = "gesture_assist_video";
+    private static String PREF_KEY_VIDEO_SILENCE = "gesture_assist_video_silence";
+    private static String TAG = "AssistGesSensePrefCtrl";
+    private AssistGestureHelper mAssistGestureHelper;
+    private AssistGestureFeatureProvider mFeatureProvider;
+    private RestrictedLockUtils.EnforcedAdmin mFunDisallowedAdmin;
+    private boolean mFunDisallowedBySystem;
+    private AssistGestureHelper.GestureListener mGestureListener = new C15781();
+    public Handler mHandler = new Handler(Looper.getMainLooper());
+    private long[] mHits = new long[4];
+    public  AssistGestureIndicatorView mIndicatorView;
+    private SeekBarPreference mPreference;
+    private PreferenceScreen mScreen;
+    private SettingObserver mSettingObserver;
+    private UserManager mUserManager;
+    private boolean mWasListening;
+    private WindowManager mWindowManager;
 
-    public AssistGestureSilenceAlertsPreferenceController(Context context, String str) {
-        super( context, str );
-        this.mFeatureProvider = FeatureFactory.getFactory( context ).getAssistGestureFeatureProvider();
+    class C15781 implements AssistGestureHelper.GestureListener {
+        C15781() {
+        }
+
+        public void onGestureProgress(float f, int i) {
+            AssistGestureSensitivityPreferenceController.this.mIndicatorView.onGestureProgress(f);
+        }
+
+        public void onGestureDetected() {
+            AssistGestureSensitivityPreferenceController.this.mIndicatorView.onGestureDetected();
+        }
     }
 
-    public String getVideoPrefKey() {
-        return PREF_KEY_VIDEO;
+    class SettingObserver extends ContentObserver {
+        private Uri ASSIST_GESTURE_ENABLED_URI = Settings.Secure.getUriFor("assist_gesture_enabled");
+        private Uri ASSIST_GESTURE_SENSITIVITY_URI = Settings.Secure.getUriFor("assist_gesture_sensitivity");
+        private Uri ASSIST_GESTURE_SILENCE_PHONE_ENABLED_URI = Settings.Secure.getUriFor("assist_gesture_silence_alerts_enabled");
+
+        SettingObserver() {
+            super(AssistGestureSensitivityPreferenceController.this.mHandler);
+        }
+
+        public void register() {
+            ContentResolver contentResolver = AssistGestureSensitivityPreferenceController.this.mContext.getContentResolver();
+            contentResolver.registerContentObserver(this.ASSIST_GESTURE_ENABLED_URI, false, this);
+            contentResolver.registerContentObserver(this.ASSIST_GESTURE_SILENCE_PHONE_ENABLED_URI, false, this);
+            contentResolver.registerContentObserver(this.ASSIST_GESTURE_SENSITIVITY_URI, false, this);
+        }
+
+        public void unregister() {
+            AssistGestureSensitivityPreferenceController.this.mContext.getContentResolver().unregisterContentObserver(this);
+        }
+
+        public void onChange(boolean z) {
+            AssistGestureSensitivityPreferenceController.this.updatePreference();
+        }
     }
 
-    public int getAvailabilityStatus() {
-        return this.mFeatureProvider.isSensorAvailable( this.mContext ) ? 0 : 3;
+    public int getMin() {
+        return 0;
     }
 
-    public boolean isSliceable() {
-        return TextUtils.equals(
-                getPreferenceKey(), ASSIST_GESTURE_SILENCE_ALERTS_PREF_KEY);
+    public AssistGestureSensitivityPreferenceController(Context context, String str) {
+        super(context, str);
+        this.mFeatureProvider = FeatureFactory.getFactory(context).getAssistGestureFeatureProvider();
+        this.mSettingObserver = new SettingObserver();
+        this.mAssistGestureHelper = new AssistGestureHelper(context);
+        this.mUserManager = (UserManager) context.getSystemService(Context.USER_SERVICE);
+        this.mIndicatorView = new AssistGestureIndicatorView(this.mContext);
+        this.mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+    }
+
+    public void onResume() {
+        this.mAssistGestureHelper.bindToElmyraServiceProxy();
+        this.mSettingObserver.register();
+        updatePreference();
+        this.mFunDisallowedAdmin = RestrictedLockUtilsInternal.checkIfRestrictionEnforced(this.mContext, "no_fun", UserHandle.myUserId());
+        this.mFunDisallowedBySystem = RestrictedLockUtilsInternal.hasBaseUserRestriction(this.mContext, "no_fun", UserHandle.myUserId());
+        ((Activity) this.mContext).setRequestedOrientation(1);
+        WindowManager windowManager = this.mWindowManager;
+        AssistGestureIndicatorView assistGestureIndicatorView = this.mIndicatorView;
+        windowManager.addView(assistGestureIndicatorView, assistGestureIndicatorView.getLayoutParams(((Activity) this.mContext).getWindow().getAttributes()));
+    }
+
+    public void onPause() {
+        updateGestureListenerState(false);
+        this.mAssistGestureHelper.unbindFromElmyraServiceProxy();
+        this.mSettingObserver.unregister();
+        this.mWindowManager.removeView(this.mIndicatorView);
     }
 
     public void displayPreference(PreferenceScreen preferenceScreen) {
-        if (((AssistGestureFeatureProviderGoogleImpl) this.mFeatureProvider).isDeskClockSupported(
-                this.mContext )) { Preference findPreference = preferenceScreen.findPreference( ASSIST_GESTURE_SILENCE_ALERTS_PREF_KEY );
-            if (findPreference != null) {
-                findPreference.setSummary(
-                        (int) R.string.assist_gesture_setting_enable_ring_alarm_silence_text);
-            }
+        this.mPreference = (SeekBarPreference) preferenceScreen.findPreference(getPreferenceKey());
+        this.mScreen = preferenceScreen;
+        if (!this.mFeatureProvider.isSupported(this.mContext)) {
+            setVisible(preferenceScreen, PREF_KEY_VIDEO, false);
+        } else {
+            setVisible(preferenceScreen, PREF_KEY_VIDEO_SILENCE, false);
         }
         super.displayPreference(preferenceScreen);
     }
 
-    public boolean setChecked(boolean z) {
-        return Settings.Secure.putInt(
-                this.mContext.getContentResolver(), "assist_gesture_silence_alerts_enabled", z ? 1 : 0 );
+    public void updateState(Preference preference) {
+        updatePreference();
     }
 
-    public boolean isChecked() {
-        return Settings.Secure.getInt(
-                this.mContext.getContentResolver(), "assist_gesture_silence_alerts_enabled", 1 ) != 0;
+    public int getSliderPosition() {
+        return getSensitivityInt(this.mContext);
+    }
+
+    public boolean setSliderPosition(int i) {
+        return Settings.Secure.putFloat(this.mContext.getContentResolver(), "assist_gesture_sensitivity", convertSensitivityIntToFloat(this.mContext, i));
+    }
+
+    public int getAvailabilityStatus() {
+        return isAvailable(this.mContext, this.mFeatureProvider) ? 0 : 3;
+    }
+
+    public boolean isSliceable() {
+        return TextUtils.equals(getPreferenceKey(), "gesture_assist_sensitivity");
+    }
+
+    public int getMax() {
+        return this.mContext.getResources().getInteger(R.integer.gesture_assist_sensitivity_max);
+    }
+
+    private void updateGestureListenerState(boolean z) {
+        if (z != this.mWasListening) {
+            if (z) {
+                this.mAssistGestureHelper.setListener(this.mGestureListener);
+            } else {
+                this.mAssistGestureHelper.setListener((AssistGestureHelper.GestureListener) null);
+            }
+            this.mWasListening = z;
+        }
+    }
+
+    public void updatePreference() {
+        if (this.mPreference != null) {
+            int sliderPosition = getSliderPosition();
+            boolean z = false;
+            if (!this.mFeatureProvider.isSupported(this.mContext)) {
+                setVisible(this.mScreen, PREF_KEY_VIDEO, false);
+                setVisible(this.mScreen, PREF_KEY_VIDEO_SILENCE, true);
+            } else {
+                setVisible(this.mScreen, PREF_KEY_VIDEO, true);
+                setVisible(this.mScreen, PREF_KEY_VIDEO_SILENCE, false);
+            }
+            this.mPreference.setProgress(sliderPosition);
+            boolean z2 = Settings.Secure.getInt(this.mContext.getContentResolver(), "assist_gesture_enabled", 1) != 0;
+            boolean z3 = Settings.Secure.getInt(this.mContext.getContentResolver(), "assist_gesture_silence_alerts_enabled", 1) != 0;
+            if (this.mFeatureProvider.isSupported(this.mContext) && (z2 || z3)) {
+                this.mPreference.setEnabled(true);
+            } else if (!this.mFeatureProvider.isSensorAvailable(this.mContext) || !z3) {
+                this.mPreference.setEnabled(false);
+            } else {
+                this.mPreference.setEnabled(true);
+            }
+            if ((z2 && this.mFeatureProvider.isSupported(this.mContext)) || z3) {
+                z = true;
+            }
+            updateGestureListenerState(z);
+        }
+    }
+
+    public static boolean isAvailable(Context context, AssistGestureFeatureProvider assistGestureFeatureProvider) {
+        return assistGestureFeatureProvider.isSensorAvailable(context);
+    }
+
+    public static int getMaxSensitivityResourceInteger(Context context) {
+        return context.getResources().getInteger(R.integer.gesture_assist_sensitivity_max);
+    }
+
+    public static int convertSensitivityFloatToInt(Context context, float f) {
+        return Math.round(f * ((float) getMaxSensitivityResourceInteger(context)));
+    }
+
+    public static float convertSensitivityIntToFloat(Context context, int i) {
+        return 1.0f - (((float) i) / ((float) getMaxSensitivityResourceInteger(context)));
+    }
+
+    public static float getSensitivity(Context context) {
+        float f = Settings.Secure.getFloat(context.getContentResolver(), "assist_gesture_sensitivity", 0.5f);
+        if (f < 0.0f || f > 1.0f) {
+            f = 0.5f;
+        }
+        return 1.0f - f;
+    }
+
+    public static int getSensitivityInt(Context context) {
+        return convertSensitivityFloatToInt(context, getSensitivity(context));
+    }
+
+    public boolean handlePreferenceTreeClick(Preference preference) {
+        long[] jArr = this.mHits;
+        System.arraycopy(jArr, 1, jArr, 0, jArr.length - 1);
+        long[] jArr2 = this.mHits;
+        jArr2[jArr2.length - 1] = SystemClock.uptimeMillis();
+        if (this.mHits[0] >= SystemClock.uptimeMillis() - 500) {
+            if (this.mUserManager.hasUserRestriction("no_fun")) {
+                RestrictedLockUtils.EnforcedAdmin enforcedAdmin = this.mFunDisallowedAdmin;
+                if (enforcedAdmin != null && !this.mFunDisallowedBySystem) {
+                    RestrictedLockUtils.sendShowAdminSupportDetailsIntent(this.mContext, enforcedAdmin);
+                }
+                return false;
+            }
+            Intent intent = new Intent(this.mContext, AssistGestureBubbleActivity.class);
+            try {
+                this.mContext.startActivity(intent);
+                return true;
+            } catch (Exception unused) {
+                Log.e(TAG, "Unable to start activity " + intent.toString());
+            }
+        }
+        return false;
     }
 }
-
-

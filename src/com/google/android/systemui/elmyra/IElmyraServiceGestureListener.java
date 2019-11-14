@@ -7,47 +7,35 @@ import android.os.Parcel;
 import android.os.RemoteException;
 
 public interface IElmyraServiceGestureListener extends IInterface {
-  void onGestureDetected() throws RemoteException;
 
-  void onGestureProgress(float p0, int p1) throws RemoteException;
+    public static abstract class Stub extends Binder implements IElmyraServiceGestureListener {
+        public IBinder asBinder() {
+            return this;
+        }
 
-  abstract class Stub extends Binder implements IElmyraServiceGestureListener {
-    public Stub() {
-      this.attachInterface(
-          this, "com.google.android.systemui.elmyra.IElmyraServiceGestureListener");
+        public Stub() {
+            attachInterface(this, "com.google.android.systemui.elmyra.IElmyraServiceGestureListener");
+        }
+
+        public boolean onTransact(int i, Parcel parcel, Parcel parcel2, int i2) throws RemoteException {
+            if (i == FLAG_ONEWAY) {
+                parcel.enforceInterface("com.google.android.systemui.elmyra.IElmyraServiceGestureListener");
+                onGestureProgress(parcel.readFloat(), parcel.readInt());
+                return true;
+            } else if (i == 2) {
+                parcel.enforceInterface("com.google.android.systemui.elmyra.IElmyraServiceGestureListener");
+                onGestureDetected();
+                return true;
+            } else if (i != INTERFACE_TRANSACTION) {
+                return super.onTransact(i, parcel, parcel2, i2);
+            } else {
+                parcel2.writeString("com.google.android.systemui.elmyra.IElmyraServiceGestureListener");
+                return true;
+            }
+        }
     }
 
-    public IBinder asBinder() {
-      return this;
-    }
+    void onGestureDetected() throws RemoteException;
 
-    // Surge: set case 1 to FLAG_ONEWAY since its (int, Parcel, Parcel, int
-    public boolean onTransact(int n, Parcel parcel, Parcel parcel2, int n2) throws RemoteException {
-      if (n == INTERFACE_TRANSACTION) {
-        parcel2.writeString("com.google.android.systemui.elmyra.IElmyraServiceGestureListener");
-        return true;
-      }
-      switch (n) {
-        default:
-          {
-            return super.onTransact(n, parcel, parcel2, n2);
-          }
-        case 2:
-          {
-            parcel.enforceInterface(
-                "com.google.android.systemui.elmyra.IElmyraServiceGestureListener");
-            this.onGestureDetected();
-            return true;
-          }
-        case FLAG_ONEWAY:
-          {
-            parcel.enforceInterface(
-                "com.google.android.systemui.elmyra.IElmyraServiceGestureListener");
-            this.onGestureProgress(parcel.readFloat(), parcel.readInt());
-            return true;
-          }
-      }
-    }
-  }
+    void onGestureProgress(float f, int i) throws RemoteException;
 }
-

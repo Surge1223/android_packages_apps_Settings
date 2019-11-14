@@ -37,9 +37,7 @@ public class SuggestionFeatureProviderGoogleImpl extends SuggestionFeatureProvid
                 return WakeScreenSuggestionActivity.isSuggestionComplete(context);
             }
 */
-            return super.isSuggestionComplete(context, componentName);
-        }
-
+        return super.isSuggestionComplete(context, componentName);
     }
-}
 
+}
