@@ -10338,7 +10338,6 @@
     <string name="assist_gesture_squeeze_help_maximum_sensitivity">Light squeeze</string>
     <string name="assist_gesture_squeeze_help_minimum_sensitivity">Firm squeeze</string>
     <string name="assist_gesture_squeeze_sensitivity_label">Squeeze sensitivity</string>
-    <string name="assist_gesture_title">Active Edge</string>
     <string name="assist_gesture_training_enrolling_error_may_cause_falsing">May bring up Assistant accidentally</string>
     <string name="assist_gesture_training_enrolling_error_squeeze_bottom">Squeeze the bottom half of your phone</string>
     <string name="assist_gesture_training_enrolling_error_squeeze_faster">Squeeze faster</string>
