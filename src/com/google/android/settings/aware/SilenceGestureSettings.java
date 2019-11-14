@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SilenceGestureSettings extends DashboardFragment {
-    public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new C15671();
+    public Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new C15671();
 
     class C15671 extends BaseSearchIndexProvider {
         C15671() {
@@ -21,7 +21,7 @@ public class SilenceGestureSettings extends DashboardFragment {
         public List<SearchIndexableResource> getXmlResourcesToIndex(Context context, boolean z) {
             SearchIndexableResource searchIndexableResource = new SearchIndexableResource(context);
             searchIndexableResource.xmlResId = R.xml.silence_gesture_settings;
-            return Arrays.asList(new SearchIndexableResource[]{searchIndexableResource});
+            return Arrays.asList( searchIndexableResource );
         }
     }
 
@@ -39,10 +39,9 @@ public class SilenceGestureSettings extends DashboardFragment {
 
     public void onAttach(Context context) {
         super.onAttach(context);
-        ((SilenceGestureFooterPreferenceController) use(SilenceGestureFooterPreferenceController.class)).setFooterMixin(this.mFooterPreferenceMixin);
+        use(SilenceGestureFooterPreferenceController.class).setFooterMixin(this.mFooterPreferenceMixin);
     }
 
-    /* access modifiers changed from: protected */
     public List<AbstractPreferenceController> createPreferenceControllers(Context context) {
         SilenceGestureFooterPreferenceController silenceGestureFooterPreferenceController = new SilenceGestureFooterPreferenceController(context);
         Lifecycle settingsLifecycle = getSettingsLifecycle();

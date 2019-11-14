@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SkipGestureSettings extends DashboardFragment {
-    public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new C15681();
+    public Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new C15681();
 
     public String getLogTag() {
         return "SkipGestureSettings";
@@ -30,7 +30,7 @@ public class SkipGestureSettings extends DashboardFragment {
 
     public void onAttach(Context context) {
         super.onAttach( context );
-        ((SkipGestureFooterPreferenceController) use( SkipGestureFooterPreferenceController.class )).setFooterMixin( this.mFooterPreferenceMixin );
+        use( SkipGestureFooterPreferenceController.class ).setFooterMixin( this.mFooterPreferenceMixin );
     }
 
     public List<AbstractPreferenceController> createPreferenceControllers(Context context) {
@@ -49,7 +49,7 @@ public class SkipGestureSettings extends DashboardFragment {
         public List<SearchIndexableResource> getXmlResourcesToIndex(Context context, boolean z) {
             SearchIndexableResource searchIndexableResource = new SearchIndexableResource( context );
             searchIndexableResource.xmlResId = R.xml.skip_gesture_settings;
-            return Arrays.asList( new SearchIndexableResource[]{searchIndexableResource} );
+            return Arrays.asList( searchIndexableResource );
         }
     }
 }

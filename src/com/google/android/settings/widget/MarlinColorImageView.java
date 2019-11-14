@@ -1,40 +1,43 @@
 package com.google.android.settings.widget;
 
-import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.SystemProperties;
+import android.content.res.Resources.Theme;
 import android.util.AttributeSet;
+import android.content.Context;
 import android.widget.ImageView;
-import com.android.settings.R;
 
-public class MarlinColorImageView extends ImageView {
-    public MarlinColorImageView(Context context) {
+public class MarlinColorImageView extends ImageView
+{
+    public MarlinColorImageView(final Context context) {
         super(context);
     }
 
-    public MarlinColorImageView(Context context, AttributeSet attributeSet) {
-        super(context, attributeSet);
+    public MarlinColorImageView(final Context context, final AttributeSet set) {
+        super(context, set);
     }
 
-    public void setImageDrawable(Drawable drawable) {
-        Drawable mutate = drawable.mutate();
-        mutate.applyTheme(getDeviceColorTheme());
-        super.setImageDrawable(mutate);
-    }
-
-    private Resources.Theme getDeviceColorTheme() {
-        Resources.Theme newTheme = getResources().newTheme();
-        String str = SystemProperties.get("ro.boot.hardware.color");
-        if ("BLU00".equals(str)) {
-            newTheme.applyStyle(2131951908, true);
-        } else if ("SLV00".equals(str)) {
-            newTheme.applyStyle(2131951910, true);
-        } else if ("GRA00".equals(str)) {
-            newTheme.applyStyle(2131951909, true);
-        } else {
-            newTheme.applyStyle(R.style.MarlinColors, true);
+    private Theme getDeviceColorTheme() {
+        final Theme theme = this.getResources().newTheme();
+        final String value = SystemProperties.get("ro.boot.hardware.color");
+        if ("BLU00".equals(value)) {
+            theme.applyStyle(2131951822, true);
         }
-        return newTheme;
+        else if ("SLV00".equals(value)) {
+            theme.applyStyle(2131951824, true);
+        }
+        else if ("GRA00".equals(value)) {
+            theme.applyStyle(2131951823, true);
+        }
+        else {
+            theme.applyStyle(2131951821, true);
+        }
+        return theme;
+    }
+
+    public void setImageDrawable(Drawable mutate) {
+        mutate = mutate.mutate();
+        mutate.applyTheme(this.getDeviceColorTheme());
+        super.setImageDrawable(mutate);
     }
 }

@@ -1,14 +1,15 @@
 package com.google.android.settings.widget;
 
-import android.content.Context;
 import android.content.res.TypedArray;
-import android.util.AttributeSet;
+import com.android.settings.R;
+import android.view.ViewGroup;
 import android.view.LayoutInflater;
+import android.util.AttributeSet;
+import android.content.Context;
+import android.widget.TextView;
+import android.widget.ProgressBar;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import com.android.settings.R;
 
 public class AssistGestureTrainingProgressBar extends FrameLayout {
     private View mDoneView;

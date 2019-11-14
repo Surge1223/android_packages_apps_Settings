@@ -46,7 +46,7 @@ public final class FeatureFactoryImpl extends com.android.settings.overlay.Featu
         return this.mApplicationFeatureProvider;
     }
 
-    public SupportFeatureProvider getSupportFeatureProvider(Context context) {
+/*    public SupportFeatureProvider getSupportFeatureProvider(Context context) {
         if (this.mSupportProvider == null) {
             this.mSupportProvider = new SupportFeatureProviderImpl(context.getApplicationContext());
         }

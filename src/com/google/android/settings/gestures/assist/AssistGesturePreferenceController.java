@@ -1,86 +1,92 @@
 package com.google.android.settings.gestures.assist;
 
+import android.content.ContentResolver;
 import android.content.Context;
-import android.provider.Settings.Secure;
+import android.provider.Settings;
+import android.text.TextUtils;
+
 import androidx.preference.Preference;
 import androidx.preference.PreferenceScreen;
+
+import com.android.internal.annotations.VisibleForTesting;
 import com.android.settings.gestures.AssistGestureFeatureProvider;
 import com.android.settings.gestures.GesturePreferenceController;
 import com.android.settings.overlay.FeatureFactory;
-import com.android.settingslib.core.lifecycle.Lifecycle;
 import com.android.settingslib.core.lifecycle.LifecycleObserver;
 import com.android.settingslib.core.lifecycle.events.OnResume;
-import com.android.settings.R;
 
-public class AssistGesturePreferenceController extends GesturePreferenceController implements LifecycleObserver, OnResume {
+public class AssistGesturePreferenceController extends GesturePreferenceController implements LifecycleObserver, OnResume
+{
+    @VisibleForTesting
     static final int OFF = 0;
+    @VisibleForTesting
     static final int ON = 1;
+    private static final String PREF_KEY_VIDEO = "gesture_assist_video";
+    private static final String SECURE_KEY_ASSIST = "assist_gesture_enabled";
     private final AssistGestureFeatureProvider mFeatureProvider;
     private Preference mPreference;
     private PreferenceScreen mScreen;
 
-    public AssistGesturePreferenceController(Context context, Lifecycle lifecycle) {
-        super(context, lifecycle);
+    public AssistGesturePreferenceController(final Context context, final String s) {
+        super(context, s);
         this.mFeatureProvider = FeatureFactory.getFactory(context).getAssistGestureFeatureProvider();
-        if (lifecycle != null) {
-            lifecycle.addObserver(this);
-        }
     }
 
     private void updatePreference() {
-        if (this.mPreference != null && this.mScreen != null) {
-            if (!isAvailable()) {
-//                removePreference(this.mScreen, getPreferenceKey());
-            } else if (this.mScreen.findPreference(getPreferenceKey()) == null) {
-                this.mScreen.addPreference(this.mPreference);
+        if (this.mPreference != null) {
+            final PreferenceScreen mScreen = this.mScreen;
+            if (mScreen != null) {
+                this.setVisible(mScreen, this.getPreferenceKey(), this.isAvailable());
             }
         }
     }
 
-    public void displayPreference(PreferenceScreen preferenceScreen) {
-        this.mScreen = preferenceScreen;
-        this.mPreference = preferenceScreen.findPreference(getPreferenceKey());
-        super.displayPreference(preferenceScreen);
+    @Override
+    public void displayPreference(final PreferenceScreen mScreen) {
+        this.mScreen = mScreen;
+        this.mPreference = mScreen.findPreference(this.getPreferenceKey());
+        super.displayPreference(mScreen);
     }
 
     @Override
     public int getAvailabilityStatus() {
-        return 0;
+        int n;
+        if (this.mFeatureProvider.isSupported(super.mContext)) {
+            n = 0;
+        }
+        else {
+            n = 3;
+        }
+        return n;
     }
 
-    public String getPreferenceKey() {
-        return "gesture_assist";
-    }
-
+    @Override
     protected String getVideoPrefKey() {
         return "gesture_assist_video";
     }
 
-    public boolean isAvailable() {
-        return this.mFeatureProvider.isSupported(this.mContext);
-    }
-
-    protected boolean isSwitchPrefEnabled() {
-        return Secure.getInt(this.mContext.getContentResolver(), "assist_gesture_enabled", 1) != 0;
-    }
-
     @Override
     public boolean isChecked() {
-        return false;
+        final ContentResolver contentResolver = super.mContext.getContentResolver();
+        boolean b = true;
+        if (Settings.Secure.getInt(contentResolver, "assist_gesture_enabled", 1) == 0) {
+            b = false;
+        }
+        return b;
     }
 
     @Override
-    public boolean setChecked(boolean isChecked) {
-        return false;
+    public boolean isSliceable() {
+        return TextUtils.equals((CharSequence)this.getPreferenceKey(), (CharSequence)"gesture_assist");
     }
 
-    public boolean onPreferenceChange(Preference preference, Object obj) {
-        Secure.putInt(this.mContext.getContentResolver(), "assist_gesture_enabled", ((Boolean) obj).booleanValue() ? 1 : 0);
-        return true;
-    }
-
+    @Override
     public void onResume() {
-        updatePreference();
+        this.updatePreference();
+    }
+
+    @Override
+    public boolean setChecked(final boolean b) {
+        return Settings.Secure.putInt(super.mContext.getContentResolver(), "assist_gesture_enabled", (int)(b ? 1 : 0));
     }
 }
-
