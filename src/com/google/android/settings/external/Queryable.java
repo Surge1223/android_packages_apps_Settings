@@ -1,15 +1,15 @@
 package com.google.android.settings.external;
 
+import android.content.Context;
 import android.database.Cursor;
 
 import com.android.settings.datausage.DataUsageSummary;
 import com.android.settings.slices.SliceBuilderUtils;
-
-import android.content.Context;
+import com.android.settings.slices.SliceData;
 
 public interface Queryable
 {
-    default String getIntentString(final Context context, final String s, final Class<DataUsageSummary> clazz, final String s2) {
+    default String getIntentString(final Context context, final String s, final Class<DataUsageSummary> clazz, String s2) {
         return SliceBuilderUtils.buildSearchResultPageIntent(context, clazz.getName(), s, s2, 1033).toUri(0);
     }
 
@@ -21,7 +21,7 @@ public interface Queryable
         throw new UnsupportedOperationException("Method not supported");
     }
 
-    default Cursor getUpdateCursor(final Context context, final String s) {
+    default Cursor getUpdateCursor(final Context context, SliceData sliceData, String s) {
         try {
             return this.getUpdateCursor(context, Integer.valueOf(s));
         }
@@ -38,3 +38,4 @@ public interface Queryable
         return n == 0 && n2 != n3;
     }
 }
+

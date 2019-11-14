@@ -69,3 +69,4 @@ public class MobileDataSetting implements Queryable {
         return context.getString(R.string.data_usage_summary_title);
     }
 }
+

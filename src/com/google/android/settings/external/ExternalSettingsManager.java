@@ -14,7 +14,7 @@ public class ExternalSettingsManager {
     }
     public static Cursor getAccessCursorForSpecialSetting(Context context, String str, String str2, SliceData sliceData) {
         char c;
-        Cursor cursor;
+        Cursor cursor = null;
         int i = -1;
         switch (str2.hashCode()) {
             case -1903108977:
@@ -152,7 +152,7 @@ public class ExternalSettingsManager {
                 cursor = new SliceBasedSetting().getAccessCursor(context, sliceData);
                 break;
             case 12:
-                cursor = InlineSettings.COLOR_INVERSION_SETTING.getAccessCursor(context, sliceData);
+ /*               cursor = InlineSettings.COLOR_INVERSION_SETTING.getAccessCursor(context, sliceData);
                 break;
             case 13:
                 cursor = InlineSettings.DATA_SAVER_SETTING.getAccessCursor(context, sliceData);
@@ -169,9 +169,11 @@ public class ExternalSettingsManager {
             case 17:
                 cursor = InlineSettings.MAGNIFY_NAVBAR_SETTING.getAccessCursor(context, sliceData);
                 break;
+*/
             case 18:
                 cursor = InlineSettings.MOBILE_DATA_SETTING.getAccessCursor(context, sliceData);
                 break;
+/*
             case 19:
                 cursor = InlineSettings.NFC_SETTING.getAccessCursor(context, sliceData);
                 break;
@@ -183,7 +185,9 @@ public class ExternalSettingsManager {
                 break;
             case 22:
                 cursor = InlineSettings.WIFI_SETTING.getAccessCursor(context, sliceData);
-                break;
+               break;
+
+*/
             default:
                 cursor = null;
                 break;
@@ -201,7 +205,7 @@ public class ExternalSettingsManager {
 
     public static Cursor getUpdateCursorForSpecialSetting(Context context, String str, String str2, String str3, SliceData sliceData) {
         char c;
-        Cursor cursor;
+        Cursor cursor = null;
         int i = -1;
         switch (str2.hashCode()) {
             case -1903108977:
@@ -338,7 +342,7 @@ public class ExternalSettingsManager {
             case 11:
                 cursor = new SliceBasedSetting().getUpdateCursor(context, sliceData, str3);
                 break;
-            case 12:
+/*            case 12:
                 cursor = InlineSettings.COLOR_INVERSION_SETTING.getUpdateCursor(context, sliceData, str3);
                 break;
             case 13:
@@ -356,9 +360,11 @@ public class ExternalSettingsManager {
             case 17:
                 cursor = InlineSettings.MAGNIFY_NAVBAR_SETTING.getUpdateCursor(context, sliceData, str3);
                 break;
+*/
             case 18:
                 cursor = InlineSettings.MOBILE_DATA_SETTING.getUpdateCursor(context, sliceData, str3);
                 break;
+/*
             case 19:
                 cursor = InlineSettings.NFC_SETTING.getUpdateCursor(context, sliceData, str3);
                 break;
@@ -370,7 +376,7 @@ public class ExternalSettingsManager {
                 break;
             case 22:
                 cursor = InlineSettings.WIFI_SETTING.getUpdateCursor(context, sliceData, str3);
-                break;
+*/
             default:
                 cursor = null;
                 break;
@@ -394,3 +400,4 @@ public class ExternalSettingsManager {
         FeatureFactory.getFactory(context).getMetricsFeatureProvider().action(0, 853, 0, SharedPreferencesLogger.buildPrefKey(str, str2), i);
     }
 }
+

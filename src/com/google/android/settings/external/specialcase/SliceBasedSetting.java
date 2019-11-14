@@ -3,57 +3,82 @@ package com.google.android.settings.external.specialcase;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
+
 import com.android.settings.core.BasePreferenceController;
 import com.android.settings.core.TogglePreferenceController;
 import com.android.settings.slices.SliceBuilderUtils;
 import com.android.settings.slices.SliceData;
 import com.google.android.settings.external.ExternalSettingsContract;
-import com.google.android.settings.external.Queryable;
 
-public class SliceBasedSetting implements Queryable {
-    static int mapAvailability(int i) {
-        if (i == 0 || i == 1) {
+public class SliceBasedSetting implements SliceBasedSettingExtracted {
+    private static String getIntentString(final Context context, final String s, final String s2, final String s3) {
+        return SliceBuilderUtils.buildSearchResultPageIntent( context, s2, s, s3, 1033 ).toUri( 0 );
+    }
+
+    static int mapAvailability(final int n) {
+        if (n == 0 || n == 1) {
             return 0;
         }
-        if (i == 2 || i == 3) {
+        if (n == 2 || n == 3) {
             return 2;
         }
-        if (i != 4) {
-            return i != 5 ? 2 : 1;
+        if (n == 4) {
+            return 6;
         }
-        return 6;
+        if (n != 5) {
+            return 2;
+        }
+        return 1;
     }
 
-    public Cursor getAccessCursor(Context context, SliceData sliceData) {
-        BasePreferenceController preferenceController = SliceBuilderUtils.getPreferenceController(context, sliceData);
-        int isChecked = preferenceController instanceof TogglePreferenceController ? ((TogglePreferenceController) preferenceController).isChecked() : -1;
-        MatrixCursor matrixCursor = new MatrixCursor(ExternalSettingsContract.EXTERNAL_SETTINGS_QUERY_COLUMNS);
-        matrixCursor.newRow().add("existing_value", Integer.valueOf(isChecked)).add("availability", Integer.valueOf(mapAvailability(preferenceController.getAvailabilityStatus()))).add("intent", getIntentString(context, sliceData.getKey(), sliceData.getFragmentClassName(), sliceData.getScreenTitle().toString())).add("icon", Integer.valueOf(sliceData.getIconResource()));
+    @Override
+    public Cursor getAccessCursor(final Context context, final SliceData sliceData) {
+        final BasePreferenceController preferenceController = SliceBuilderUtils.getPreferenceController( context, sliceData );
+        int checked;
+        if (preferenceController instanceof TogglePreferenceController) {
+            checked = (((TogglePreferenceController) preferenceController).isChecked() ? 1 : 0);
+        } else {
+            checked = -1;
+        }
+        MatrixCursor matrixCursor = new MatrixCursor( ExternalSettingsContract.EXTERNAL_SETTINGS_QUERY_COLUMNS );
+        matrixCursor.newRow().add(
+                  "existing_value", checked ).add
+                ( "availability", mapAvailability( preferenceController.getAvailabilityStatus() ) ).add
+                ( "intent", getIntentString( context, sliceData.getKey(), sliceData.getFragmentClassName(), sliceData.getScreenTitle().toString() ) ).add
+                ( "icon", sliceData.getIconResource() );
         return matrixCursor;
     }
 
-
-    public Cursor getUpdateCursor(Context context, SliceData sliceData, int i) {
-        BasePreferenceController preferenceController = SliceBuilderUtils.getPreferenceController(context, sliceData);
+    @Override
+    public Cursor getUpdateCursor(final Context context, final SliceData sliceData, int i) {
+        final BasePreferenceController preferenceController = SliceBuilderUtils.getPreferenceController( context, sliceData );
         if (!(preferenceController instanceof TogglePreferenceController)) {
-            return new MatrixCursor(ExternalSettingsContract.EXTERNAL_SETTINGS_UPDATE_COLUMNS);
+            return new MatrixCursor( ExternalSettingsContract.EXTERNAL_SETTINGS_UPDATE_COLUMNS );
         }
-        TogglePreferenceController togglePreferenceController = (TogglePreferenceController) preferenceController;
-        boolean isChecked = togglePreferenceController.isChecked();
-        int availabilityStatus = preferenceController.getAvailabilityStatus();
-        if (shouldChangeValue(availabilityStatus, isChecked ? 1 : 0, i)) {
-            boolean z = true;
-            if (i != 1) {
-                z = false;
+        final TogglePreferenceController togglePreferenceController = (TogglePreferenceController) preferenceController;
+        final int checked = togglePreferenceController.isChecked() ? 1 : 0;
+        final int availabilityStatus = preferenceController.getAvailabilityStatus();
+        Label_0091:
+        {
+            if (this.shouldChangeValue( availabilityStatus, checked, i )) {
+                boolean checked2 = true;
+                if (i != 1) {
+                    checked2 = false;
+                }
+                if (togglePreferenceController.setChecked( checked2 )) {
+                    break Label_0091;
+                }
             }
+            i = checked;
         }
-        i = isChecked;
-        MatrixCursor matrixCursor = new MatrixCursor(ExternalSettingsContract.EXTERNAL_SETTINGS_UPDATE_COLUMNS);
-        matrixCursor.newRow().add("newValue", Integer.valueOf(i)).add("existing_value", Integer.valueOf(isChecked)).add("availability", Integer.valueOf(availabilityStatus)).add("intent", SliceBuilderUtils.getContentIntent(context, sliceData).toUri(0)).add("icon", Integer.valueOf(sliceData.getIconResource()));
+        final MatrixCursor matrixCursor = new MatrixCursor( ExternalSettingsContract.EXTERNAL_SETTINGS_UPDATE_COLUMNS );
+        matrixCursor.newRow().add(
+                  "newValue", i ).add
+                ( "existing_value", checked ).add
+                ( "availability", availabilityStatus ).add
+                ( "intent", SliceBuilderUtils.getContentIntent( context, sliceData ).toUri( 0 ) ).add
+                ( "icon", sliceData.getIconResource() );
         return matrixCursor;
-    }
-
-    private static String getIntentString(Context context, String str, String str2, String str3) {
-        return SliceBuilderUtils.buildSearchResultPageIntent(context, str2, str, str3, 1033).toUri(0);
     }
 }
+

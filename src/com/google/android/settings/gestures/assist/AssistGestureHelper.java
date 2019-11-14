@@ -106,7 +106,6 @@ public class AssistGestureHelper {
 
     public void launchAssistant() {
         try {
-            Log.e("AssistGestureHelper", "Attemping to invoke the triggerAction()");
             this.mService.triggerAction();
         } catch (RemoteException e) {
             Log.e("AssistGestureHelper", "Error invoking triggerAction()", e);

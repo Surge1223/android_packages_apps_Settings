@@ -88,3 +88,4 @@ public class SignatureVerifier {
         return ((str.hashCode() == 40935373 && str.equals("com.google.android.apps.tips")) ? (char) 0 : 65535) != 0 ? z ? DEBUG_DIGEST_GMSCORE : RELEASE_DIGEST_GMSCORE : z ? DEBUG_DIGEST_TIPS : RELEASE_DIGEST_TIPS;
     }
 }
+

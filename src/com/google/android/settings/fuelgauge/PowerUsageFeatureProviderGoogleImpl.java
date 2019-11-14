@@ -46,13 +46,12 @@ public class PowerUsageFeatureProviderGoogleImpl extends PowerUsageFeatureProvid
         return false;
     }
 
-    /* access modifiers changed from: package-private */
     public void setPackageManager(PackageManager packageManager) {
         this.mPackageManager = packageManager;
     }
 
     public Estimate getEnhancedBatteryPrediction(Context context) {
-        Cursor query = context.getContentResolver().query(getEnhancedBatteryPredictionUri(), (String[]) null, (String) null, (String[]) null, (String) null);
+        Cursor query = context.getContentResolver().query(getEnhancedBatteryPredictionUri(), null, null, null, null );
         if (query != null) {
             if (query.moveToFirst()) {
                 int columnIndex = query.getColumnIndex(BATTERY_ESTIMATE_BASED_ON_USAGE_COL);
@@ -77,13 +76,13 @@ public class PowerUsageFeatureProviderGoogleImpl extends PowerUsageFeatureProvid
                 }
                 Estimate estimate = new Estimate(query.getLong(query.getColumnIndex(BATTERY_ESTIMATE_COL)), z2, j);
                 if (query != null) {
-                    $closeResource((Throwable) null, query);
+                    $closeResource( null, query);
                 }
                 return estimate;
             }
         }
         if (query != null) {
-            $closeResource((Throwable) null, query);
+            $closeResource( null, query);
         }
         return null;
     }
@@ -96,16 +95,20 @@ public class PowerUsageFeatureProviderGoogleImpl extends PowerUsageFeatureProvid
                 th.addSuppressed(th2);
             }
         } else {
-            autoCloseable.close();
+            try {
+                autoCloseable.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public SparseIntArray getEnhancedBatteryPredictionCurve(Context context, long j) {
         try {
-            Cursor query = context.getContentResolver().query(getEnhancedBatteryPredictionCurveUri(), (String[]) null, (String) null, (String[]) null, (String) null);
+            Cursor query = context.getContentResolver().query(getEnhancedBatteryPredictionCurveUri(), null, null, null, null );
             if (query == null) {
                 if (query != null) {
-                    $closeResource((Throwable) null, query);
+                    $closeResource( null, query);
                 }
                 return null;
             }
@@ -116,7 +119,7 @@ public class PowerUsageFeatureProviderGoogleImpl extends PowerUsageFeatureProvid
                 sparseIntArray.append((int) (query.getLong(columnIndex) - j), query.getInt(columnIndex2));
             }
             if (query != null) {
-                $closeResource((Throwable) null, query);
+                $closeResource( null, query);
             }
             return sparseIntArray;
         } catch (NullPointerException unused) {
@@ -129,10 +132,7 @@ public class PowerUsageFeatureProviderGoogleImpl extends PowerUsageFeatureProvid
             return false;
         }
         try {
-            if (!this.mPackageManager.getPackageInfo("com.google.android.apps.turbo", 512).applicationInfo.enabled) {
-                return false;
-            }
-            return true;
+            return this.mPackageManager.getPackageInfo( "com.google.android.apps.turbo", PackageManager.GET_DISABLED_COMPONENTS ).applicationInfo.enabled;
         } catch (PackageManager.NameNotFoundException unused) {
             return false;
         }
@@ -147,11 +147,11 @@ public class PowerUsageFeatureProviderGoogleImpl extends PowerUsageFeatureProvid
     }
 
     public String getEnhancedEstimateDebugString(String str) {
-        return this.mContext.getString(R.string.power_usage_enhanced_debug, new Object[]{str});
+        return this.mContext.getString(R.string.power_usage_enhanced_debug, str );
     }
 
     public String getOldEstimateDebugString(String str) {
-        return this.mContext.getString(R.string.power_usage_old_debug, new Object[]{str});
+        return this.mContext.getString(R.string.power_usage_old_debug, str );
     }
 
     public String getAdvancedUsageScreenInfoString() {
@@ -165,7 +165,7 @@ public class PowerUsageFeatureProviderGoogleImpl extends PowerUsageFeatureProvid
         } else {
             appendPath.appendPath(str);
         }
-        Cursor query = context.getContentResolver().query(appendPath.build(), (String[]) null, (String) null, (String[]) null, (String) null);
+        Cursor query = context.getContentResolver().query(appendPath.build(), null, null, null, null );
         boolean z = false;
         if (query != null) {
             if (query.moveToFirst()) {
@@ -173,13 +173,13 @@ public class PowerUsageFeatureProviderGoogleImpl extends PowerUsageFeatureProvid
                     z = true;
                 }
                 if (query != null) {
-                    $closeResource((Throwable) null, query);
+                    $closeResource( null, query);
                 }
                 return z;
             }
         }
         if (query != null) {
-            $closeResource((Throwable) null, query);
+            $closeResource( null, query);
         }
         return false;
     }

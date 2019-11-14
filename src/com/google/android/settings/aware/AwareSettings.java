@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class AwareSettings extends DashboardFragment {
-    public static final Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new C15661();
+    public Indexable.SearchIndexProvider SEARCH_INDEX_DATA_PROVIDER = new C15661();
 
     class C15661 extends BaseSearchIndexProvider {
         C15661() {
@@ -54,3 +54,4 @@ public class AwareSettings extends DashboardFragment {
         }
     }
 }
+

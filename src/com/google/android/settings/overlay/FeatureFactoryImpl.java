@@ -15,7 +15,7 @@ import com.android.settings.overlay.SupportFeatureProvider;
 import com.android.settings.overlay.SurveyFeatureProvider;
 import com.android.settings.search.SearchFeatureProvider;
 // import com.google.android.settings.accounts.AccountFeatureProviderGoogleImpl;
-import com.google.android.settings.applications.ApplicationFeatureProviderGoogleImpl;
+// import com.google.android.settings.applications.ApplicationFeatureProviderGoogleImpl;
 import com.google.android.settings.aware.AwareFeatureProviderGoogleImpl;
 import com.google.android.settings.connecteddevice.dock.DockUpdaterFeatureProviderGoogleImpl;
 import com.google.android.settings.dashboard.suggestions.SuggestionFeatureProviderGoogleImpl;
@@ -23,21 +23,21 @@ import com.google.android.settings.experiments.GServicesProxy;
 import com.google.android.settings.fuelgauge.PowerUsageFeatureProviderGoogleImpl;
 import com.google.android.settings.gestures.assist.AssistGestureFeatureProviderGoogleImpl;
 import com.google.android.settings.search.SearchFeatureProviderGoogleImpl;
-//import com.google.android.settings.support.SupportFeatureProviderImpl;
-import com.google.android.settings.survey.SurveyFeatureProviderImpl;
+// import com.google.android.settings.support.SupportFeatureProviderImpl;
+// import com.google.android.settings.survey.SurveyFeatureProviderImpl;
 
 public final class FeatureFactoryImpl extends com.android.settings.overlay.FeatureFactoryImpl {
-    private AccountFeatureProvider mAccountFeatureProvider;
-    private ApplicationFeatureProvider mApplicationFeatureProvider;
+ //   private AccountFeatureProvider mAccountFeatureProvider;
+//    private ApplicationFeatureProvider mApplicationFeatureProvider;
     private AssistGestureFeatureProvider mAssistGestureFeatureProvider;
     private AwareFeatureProvider mAwareFeatureProvider;
     private DockUpdaterFeatureProvider mDockUpdaterFeatureProvider;
     private PowerUsageFeatureProvider mPowerUsageProvider;
     private SearchFeatureProvider mSearchFeatureProvider;
     private SuggestionFeatureProvider mSuggestionFeatureProvider;
-    private SupportFeatureProvider mSupportProvider;
-    private SurveyFeatureProvider mSurveyFeatureProvider;
-
+ //   private SupportFeatureProvider mSupportProvider;
+//    private SurveyFeatureProvider mSurveyFeatureProvider;
+/*
     public ApplicationFeatureProvider getApplicationFeatureProvider(Context context) {
         if (this.mApplicationFeatureProvider == null) {
             Context applicationContext = context.getApplicationContext();
@@ -74,6 +74,7 @@ public final class FeatureFactoryImpl extends com.android.settings.overlay.Featu
         return this.mSearchFeatureProvider;
     }
 
+/*
     public SurveyFeatureProvider getSurveyFeatureProvider(Context context) {
         boolean z = false;
         try {
@@ -89,7 +90,7 @@ public final class FeatureFactoryImpl extends com.android.settings.overlay.Featu
         }
         return this.mSurveyFeatureProvider;
     }
-
+*/
     public SuggestionFeatureProvider getSuggestionFeatureProvider(Context context) {
         if (this.mSuggestionFeatureProvider == null) {
             this.mSuggestionFeatureProvider = new SuggestionFeatureProviderGoogleImpl(context.getApplicationContext());
@@ -118,3 +119,4 @@ public final class FeatureFactoryImpl extends com.android.settings.overlay.Featu
         return this.mAwareFeatureProvider;
     }
 }
+

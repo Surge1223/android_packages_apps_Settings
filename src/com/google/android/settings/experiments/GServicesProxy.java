@@ -49,7 +49,7 @@ public class GServicesProxy {
 
     private static Bundle getResult(ContentResolver contentResolver, String str, Bundle bundle) {
         try {
-            FutureTask futureTask = new FutureTask(new $$Lambda$GServicesProxy$WBSYSlwW4PUWurhQBoEDzCczHg(contentResolver, str, bundle));
+            FutureTask futureTask = new FutureTask(new GServicesProxyAuth(contentResolver, str, bundle));
             Executors.newSingleThreadExecutor().submit(futureTask);
             return (Bundle) futureTask.get(100, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
@@ -58,3 +58,4 @@ public class GServicesProxy {
         }
     }
 }
+

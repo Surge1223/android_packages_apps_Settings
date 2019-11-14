@@ -36,6 +36,7 @@ public class AssistGestureFeatureProviderGoogleImpl extends AssistGestureFeature
             return true;
         } catch (PackageManager.NameNotFoundException unused) {
         }
+        return false;
     }
 
     private static boolean isOpaEligible(Context context) {

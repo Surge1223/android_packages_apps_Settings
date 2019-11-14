@@ -12,3 +12,4 @@ public class ExternalSettingsContract {
     public static final String[] EXTERNAL_SETTINGS_UPDATE_COLUMNS = {"newValue", "existing_value", "availability", "intent", "icon", "dependent_setting"};
     public static final Uri SETTINGS_MANAGER_URI = Uri.withAppendedPath(CONTENT_BASE_URI, "settings_manager");
 }
+
