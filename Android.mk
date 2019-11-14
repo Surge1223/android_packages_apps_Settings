@@ -39,7 +39,8 @@ LOCAL_STATIC_ANDROID_LIBRARIES := \
 
 LOCAL_JAVA_LIBRARIES := \
     telephony-common \
-    ims-common
+    ims-common \
+    setup-wizard-lib-gingerbread-compat
 
 LOCAL_STATIC_JAVA_LIBRARIES := \
     androidx-constraintlayout_constraintlayout-solver \
@@ -69,6 +70,7 @@ endif
 
 include frameworks/base/packages/SettingsLib/common.mk
 include frameworks/base/packages/SettingsLib/search/common.mk
+include frameworks/opt/setupwizard/library/common-gingerbread.mk
 include vendor/support/common.mk
 
 include $(BUILD_PACKAGE)
