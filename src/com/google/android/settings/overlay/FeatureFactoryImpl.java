@@ -14,7 +14,7 @@ import com.android.settings.overlay.DockUpdaterFeatureProvider;
 import com.android.settings.overlay.SupportFeatureProvider;
 import com.android.settings.overlay.SurveyFeatureProvider;
 import com.android.settings.search.SearchFeatureProvider;
-import com.google.android.settings.accounts.AccountFeatureProviderGoogleImpl;
+// import com.google.android.settings.accounts.AccountFeatureProviderGoogleImpl;
 import com.google.android.settings.applications.ApplicationFeatureProviderGoogleImpl;
 import com.google.android.settings.aware.AwareFeatureProviderGoogleImpl;
 import com.google.android.settings.connecteddevice.dock.DockUpdaterFeatureProviderGoogleImpl;
@@ -41,18 +41,18 @@ public final class FeatureFactoryImpl extends com.android.settings.overlay.Featu
     public ApplicationFeatureProvider getApplicationFeatureProvider(Context context) {
         if (this.mApplicationFeatureProvider == null) {
             Context applicationContext = context.getApplicationContext();
-            this.mApplicationFeatureProvider = new ApplicationFeatureProviderGoogleImpl(applicationContext, applicationContext.getPackageManager(), AppGlobals.getPackageManager(), (DevicePolicyManager) applicationContext.getSystemService("device_policy"));
+            this.mApplicationFeatureProvider = new ApplicationFeatureProviderGoogleImpl(applicationContext, applicationContext.getPackageManager(), AppGlobals.getPackageManager(), (DevicePolicyManager) applicationContext.getSystemService(Context.DEVICE_POLICY_SERVICE));
         }
         return this.mApplicationFeatureProvider;
     }
 
-    public SupportFeatureProvider getSupportFeatureProvider(Context context) {
+/*    public SupportFeatureProvider getSupportFeatureProvider(Context context) {
         if (this.mSupportProvider == null) {
             this.mSupportProvider = new SupportFeatureProviderImpl(context.getApplicationContext());
         }
         return this.mSupportProvider;
     }
-
+*/
     public PowerUsageFeatureProvider getPowerUsageFeatureProvider(Context context) {
         if (this.mPowerUsageProvider == null) {
             this.mPowerUsageProvider = new PowerUsageFeatureProviderGoogleImpl(context.getApplicationContext());
@@ -103,14 +103,14 @@ public final class FeatureFactoryImpl extends com.android.settings.overlay.Featu
         }
         return this.mAssistGestureFeatureProvider;
     }
-
+/*
     public AccountFeatureProvider getAccountFeatureProvider() {
         if (this.mAccountFeatureProvider == null) {
             this.mAccountFeatureProvider = new AccountFeatureProviderGoogleImpl();
         }
         return this.mAccountFeatureProvider;
     }
-
+*/
     public AwareFeatureProvider getAwareFeatureProvider() {
         if (this.mAwareFeatureProvider == null) {
             this.mAwareFeatureProvider = new AwareFeatureProviderGoogleImpl();

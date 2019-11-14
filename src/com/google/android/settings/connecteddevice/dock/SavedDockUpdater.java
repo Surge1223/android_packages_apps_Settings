@@ -11,12 +11,13 @@ import android.text.TextUtils;
 import android.util.ArrayMap;
 import android.util.AttributeSet;
 import android.util.Log;
+
 import com.android.internal.annotations.VisibleForTesting;
 import com.android.settings.R;
 import com.android.settings.connecteddevice.DevicePreferenceCallback;
 import com.android.settings.connecteddevice.dock.DockUpdater;
 import com.android.settings.widget.SingleTargetGearPreference;
-import com.google.android.settings.connecteddevice.dock.DockAsyncQueryHandler;
+
 import java.util.List;
 import java.util.Map;
 
@@ -183,7 +184,7 @@ public class SavedDockUpdater implements DockUpdater, DockAsyncQueryHandler.OnQu
                     }
                 }
             }
-            this.mPreferenceMap.keySet().removeIf(new $$Lambda$SavedDockUpdater$J8Vme1TBFB2Oj8doX2QnYETFs1E(this));
+            this.mPreferenceMap.keySet().removeIf(new SavedDockUpdaterDevice(this));
         }
     }
 

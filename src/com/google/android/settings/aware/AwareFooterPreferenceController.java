@@ -48,7 +48,7 @@ abstract class AwareFooterPreferenceController extends BasePreferenceController 
     }
 
     public AnnotationSpan.LinkInfo getLinkInfo() {
-        return new AnnotationSpan.LinkInfo("link", new C1564x9fbd900a(this));
+        return new AnnotationSpan.LinkInfo("link", new AwareFooterPreferenceOnClick(this));
     }
 
     public  void getLinkInfoAwareFooterPreferenceController(View view) {

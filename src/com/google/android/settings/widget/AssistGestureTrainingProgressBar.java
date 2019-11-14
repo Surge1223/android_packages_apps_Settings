@@ -1,15 +1,15 @@
 package com.google.android.settings.widget;
 
-import android.content.Context;
 import android.content.res.TypedArray;
-import android.util.AttributeSet;
+import com.android.settings.R;
+import android.view.ViewGroup;
 import android.view.LayoutInflater;
+import android.util.AttributeSet;
+import android.content.Context;
+import android.widget.TextView;
+import android.widget.ProgressBar;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import com.android.settings.R;
-import com.android.settings.R$styleable;
 
 public class AssistGestureTrainingProgressBar extends FrameLayout {
     private View mDoneView;
@@ -33,7 +33,7 @@ public class AssistGestureTrainingProgressBar extends FrameLayout {
         this.mProgressBar = (ProgressBar) findViewById(R.id.progress);
         this.mDoneView = findViewById(R.id.done);
         refreshViews();
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R$styleable.AssistGestureTrainingProgressBar, i, i2);
+        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.style.AssistGestureTrainingProgressBar, i, i2);
         this.mTextView.setText(obtainStyledAttributes.getText(0));
         obtainStyledAttributes.recycle();
     }

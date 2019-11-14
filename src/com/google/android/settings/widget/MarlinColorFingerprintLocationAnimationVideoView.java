@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.SystemProperties;
 import android.util.AttributeSet;
 import android.view.ContextThemeWrapper;
-import com.android.settings.R;
+
 import com.google.android.setupdesign.view.IllustrationVideoView;
 
 public class MarlinColorFingerprintLocationAnimationVideoView extends IllustrationVideoView {
@@ -19,9 +19,12 @@ public class MarlinColorFingerprintLocationAnimationVideoView extends Illustrati
             i = 2131951908;
         } else if ("SLV00".equals(str)) {
             i = 2131951910;
-        } else {
-            i = "GRA00".equals(str) ? 2131951909 : R.style.MarlinColors;
+        } else if ("GRA00".equals(str)) {
+                i = 2131951823;
+            }
+            else {
+                i = 2131951821;
+            }
+            return (Context)new ContextThemeWrapper(context, i);
         }
-        return new ContextThemeWrapper(context, i);
     }
-}
