@@ -106,6 +106,7 @@ public class AssistGestureHelper {
 
     public void launchAssistant() {
         try {
+            Log.e("AssistGestureHelper", "Attemping to invoke the triggerAction()");
             this.mService.triggerAction();
         } catch (RemoteException e) {
             Log.e("AssistGestureHelper", "Error invoking triggerAction()", e);
@@ -122,6 +123,7 @@ public class AssistGestureHelper {
     public void bindToElmyraServiceProxy() {
         if (this.mService == null) {
             try {
+                Log.d("AssistGestureHelper", "Attempting to bind to ElmyraService");
                 Intent intent = new Intent();
                 intent.setComponent(new ComponentName("com.android.systemui", "com.google.android.systemui.elmyra.ElmyraServiceProxy"));
                 this.mContext.bindServiceAsUser(intent, this.mServiceConnection, 1, UserHandle.getUserHandleForUid(0));

@@ -5,8 +5,8 @@ import android.content.Context;
 import android.provider.Settings;
 import com.android.settings.dashboard.suggestions.SuggestionFeatureProviderImpl;
 import com.android.settings.overlay.FeatureFactory;
-// import com.google.android.settings.aware.AwareSettingsActivity;
-// import com.google.android.settings.aware.WakeScreenSuggestionActivity;
+import com.google.android.settings.aware.AwareSettingsActivity;
+import com.google.android.settings.aware.WakeScreenSuggestionActivity;
 
 public class SuggestionFeatureProviderGoogleImpl extends SuggestionFeatureProviderImpl {
     public SuggestionFeatureProviderGoogleImpl(Context context) {
@@ -27,19 +27,13 @@ public class SuggestionFeatureProviderGoogleImpl extends SuggestionFeatureProvid
                 return true;
             }
             return false;
-
-        }
-/*
-        else if (className.equals(AwareSettingsActivity.class.getName())) {
+        } else if (className.equals(AwareSettingsActivity.class.getName())) {
             return AwareSettingsActivity.isSuggestionComplete(context);
         } else {
             if (className.equals(WakeScreenSuggestionActivity.class.getName())) {
                 return WakeScreenSuggestionActivity.isSuggestionComplete(context);
             }
-*/
             return super.isSuggestionComplete(context, componentName);
         }
-
     }
 }
-
