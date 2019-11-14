@@ -20,7 +20,7 @@ LOCAL_REQUIRED_MODULES := privapp_whitelist_com.android.settings
 LOCAL_MODULE_TAGS := optional
 LOCAL_USE_AAPT2 := true
 
-LOCAL_SRC_FILES := $(call all-java-files-under, src/com/android)
+LOCAL_SRC_FILES := $(call all-java-files-under, src)
 LOCAL_SRC_FILES += $(call all-java-files-under, src/com/google/android/systemui)
 LOCAL_SRC_FILES += $(call all-java-files-under, ../DU-Tweaks/src)
 

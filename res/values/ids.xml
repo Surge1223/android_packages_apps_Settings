@@ -52,4 +52,8 @@
     <item type="id" name="progress" />
     <item type="id" name="done" />
 
+    <item type="id" name="indicator_left" />
+    <item type="id" name="indicator_right" />
+    <item type="id" name="info_button" />
+
 </resources>

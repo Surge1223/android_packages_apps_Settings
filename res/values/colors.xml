@@ -148,4 +148,20 @@
     <color name="dialog_background">@*android:color/background_device_default_light</color>
 
     <color name="face_intro_outline">#ffdadce0</color>
+
+    <color name="hats_lib_checkbox_tint">#8c333333</color>
+    <color name="hats_lib_open_text_underline">#ff4285f4</color>
+    <color name="hats_lib_prompt_take_survey_blue">#ff4285f4</color>
+    <color name="hats_lib_prompt_take_survey_blue_focused">#ff21437c</color>
+    <color name="hats_lib_prompt_take_survey_blue_pressed">#ff3d7ce3</color>
+    <color name="hats_lib_prompt_text_color">#ff212121</color>
+    <color name="hats_lib_survey_control_normal">#ff9b9b9b</color>
+    <color name="hats_lib_survey_highlight_color">#ffeeeeee</color>
+    <color name="hats_lib_survey_question_text_color">#ff333333</color>
+    <color name="hats_lib_survey_text_color">#ff757575</color>
+    <color name="hats_lib_survey_white_ripple_color">#ff757575</color>
+    <color name="hats_lib_survey_white_shape_color">#ffffffff</color>
+    <color name="hats_lib_survey_white_shape_focused_color">#ff848484</color>
+    <color name="hats_lib_survey_white_shape_pressed_color">#ffeeeeee</color>
+    <color name="hats_lib_white_100">#ffffffff</color>
 </resources>

@@ -655,5 +655,9 @@
            parent="@style/AccessibilityDialogButton"></style>
     <style name="AccessibilityDialogButtonDeny"
            parent="@style/AccessibilityDialogButton"></style>
+    <style name="AssistGestureTrainingProgressBar">
+        <item name="android:padding">8.0dip</item>
+    </style>
+
 
 </resources>
