@@ -21,6 +21,26 @@
     android:key="gesture_settings_screen"
     android:title="@string/gesture_preference_title">
 
+    <PreferenceCategory
+        android:key="aware_gestures"
+        android:title="@string/aware_category_gesture"
+        settings:controller="com.google.android.settings.aware.AwareGesturesCategoryPreferenceController"
+        settings:keywords="@string/keywords_aware_gesture">
+        <com.google.android.settings.aware.SkipGestureDialogPreference
+            android:key="gesture_skip_summary"
+            android:title="@string/gesture_skip_title"
+            settings:controller="com.google.android.settings.aware.SkipDialogGesturePreferenceController"
+            settings:keywords="@string/keywords_gesture_skip" />
+        <com.google.android.settings.aware.SilenceGestureDialogPreference
+            android:key="gesture_silence_summary"
+            android:title="@string/gesture_silence_title"
+            settings:controller="com.google.android.settings.aware.SilenceDialogGesturePreferenceController"
+            settings:keywords="@string/keywords_gesture_silence" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="other_gestures"
+        android:title="@string/other_gestures_category_title"
+        settings:controller="com.google.android.settings.aware.AwareGesturesCategoryPreferenceController" />
     <Preference
         android:key="gesture_assist_input_summary"
         android:title="@string/assist_gesture_title"
