@@ -49,7 +49,7 @@ public class AssistGestureTrainingEnrollingActivity extends AssistGestureTrainin
   }
 
   @Override
-  protected void onCreate(Bundle bundle) {
+  public void onCreate(Bundle bundle) {
     setTheme(SetupWizardUtils.getTheme(getIntent()));
     setContentView(getContentView());
     super.onCreate(bundle);

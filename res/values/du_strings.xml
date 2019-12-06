@@ -98,4 +98,17 @@
     <string name="selinux_status_permissive">Permissive</string>
     <string name="selinux_status_enforcing">Enforcing</string>
 
+    <string name="keywords_gesture_skip">Swipe, Sensor, Music, Hand, Brush, Sweep, Movement, Skip, songs, forward, back, previous, Wave, Gesture</string>
+    <string name="gesture_skip_direction_ltr">Swipe left to right for next song</string>
+    <string name="gesture_skip_direction_rtl">Swipe right to left for next song</string>
+    <string name="gesture_skip_direction_title">Swipe direction</string>
+    <string name="gesture_skip_footer"><annotation link="link">Preferences</annotation></string>
+    <string name="gesture_skip_off_summary">Off / Skip to the next or previous song</string>
+    <string name="gesture_skip_on_summary">On / Skip to the next or previous song</string>
+    <string name="gesture_skip_summary">Skip to the next or previous song</string>
+    <string name="gesture_skip_title">Skip songs</string>
+    
+    <string name="keywords_gesture_silence">Swipe, Air Swipe, Sensor, Hand, Brush, Sweep, Movement, Mute, Snooze, Move, Wave, notification, call, alarm, Gesture</string>
+    <string name="other_gestures_category_title">Handheld Gestures</string>
+
 </resources>

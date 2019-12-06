@@ -124,7 +124,7 @@ public abstract class AssistGestureTrainingSliderBase extends AssistGestureTrain
   public abstract void onClick(View p0);
 
   @Override
-  protected void onCreate(Bundle bundle) {
+  public void onCreate(Bundle bundle) {
     super.onCreate(bundle);
     mErrorView = findViewById(R.id.error_message);
     mLinearOutSlowInInterpolator =

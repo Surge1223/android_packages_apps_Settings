@@ -33,12 +33,12 @@ public class AssistGestureSilenceAlertsPreferenceController extends GesturePrefe
     }
 
     public void displayPreference(PreferenceScreen preferenceScreen) {
-        if (((AssistGestureFeatureProviderGoogleImpl) this.mFeatureProvider).isDeskClockSupported(this.mContext)) {
-            Preference findPreference = preferenceScreen.findPreference(ASSIST_GESTURE_SILENCE_ALERTS_PREF_KEY);
-            if (findPreference != null) {
-                findPreference.setSummary((int) R.string.assist_gesture_setting_enable_ring_alarm_silence_text);
-            }
-        }
+    //    if (((AssistGestureFeatureProviderGoogleImpl) this.mFeatureProvider).isDeskClockSupported(this.mContext)) {
+    //        Preference findPreference = preferenceScreen.findPreference(ASSIST_GESTURE_SILENCE_ALERTS_PREF_KEY);
+    //        if (findPreference != null) {
+    //            findPreference.setSummary((int) R.string.assist_gesture_setting_enable_ring_alarm_silence_text);
+    //        }
+    //    }
         super.displayPreference(preferenceScreen);
     }
 

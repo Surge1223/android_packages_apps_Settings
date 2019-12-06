@@ -42,7 +42,7 @@
     <bool name="config_show_camera_laser_sensor">false</bool>
 
     <!-- Fully-qualified class name for the implementation of the FeatureFactory to be instantiated. -->
-    <string name="config_featureFactory" translatable="false">com.android.settings.overlay.FeatureFactoryImpl</string>
+    <string name="config_featureFactory" translatable="false">com.google.android.settings.overlay.FeatureFactoryImpl</string>
 
     <!-- Package name and fully-qualified class name for the wallpaper picker activity. -->
     <string name="config_wallpaper_picker_package" translatable="false">com.android.settings</string>
@@ -61,7 +61,7 @@
     <string name="gesture_double_twist_sensor_vendor" translatable="false"></string>
 
     <!-- When true enable gesture setting. -->
-    <bool name="config_gesture_settings_enabled">false</bool>
+    <bool name="config_gesture_settings_enabled">true</bool>
 
     <!-- If the Storage Manager settings are enabled. -->
     <bool name="config_storage_manager_settings_enabled">false</bool>
@@ -233,7 +233,7 @@
     <string name="config_account_intent_uri" translatable="false"></string>
 
     <!-- Whether or not the dock settings are to be displayed for this device when docked -->
-    <bool name="has_dock_settings">false</bool>
+    <bool name="has_dock_settings">true</bool>
     <!-- Whether there is a boot sounds checkbox -->
     <bool name="has_boot_sounds">false</bool>
     <!-- Whether there is a silent mode checkbox  -->

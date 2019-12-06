@@ -1,131 +1,148 @@
 package com.google.android.settings.gestures.assist;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
-import android.util.Log;
-
+import android.view.ContextThemeWrapper;
+import android.view.WindowManager;
 import com.android.settings.core.InstrumentedActivity;
+import com.android.settings.gestures.AssistGestureFeatureProvider;
 import com.android.settings.overlay.FeatureFactory;
+import com.google.android.settings.gestures.assist.AssistGestureHelper;
 import com.android.settings.R;
 
 public abstract class AssistGestureTrainingBase extends InstrumentedActivity implements AssistGestureHelper.GestureListener {
     protected AssistGestureHelper mAssistGestureHelper;
+    private AssistGestureIndicatorView mIndicatorView;
     private String mLaunchedFrom;
-
-    protected boolean flowTypeAccidentalTrigger() {
-        return "accidental_trigger".contentEquals(this.mLaunchedFrom);
-    }
-
-    protected boolean flowTypeDeferredSetup() {
-        return "deferred_setup".contentEquals(this.mLaunchedFrom);
-    }
-
-    protected boolean flowTypeSettingsSuggestion() {
-        return "settings_suggestion".contentEquals(this.mLaunchedFrom);
-    }
-
-    @Override
-    public abstract int getMetricsCategory();
-
-    protected void handleDoneAndLaunch() {
-        this.setResult(-1);
-        this.mAssistGestureHelper.setListener(null);
-        this.mAssistGestureHelper.launchAssistant();
-        this.finishAndRemoveTask();
-    }
-
-    protected void launchAssistGestureSettings() {
-        this.startActivity(new Intent("android.settings.ASSIST_GESTURE_SETTINGS"));
-    }
-
-    @Override
-    protected void onCreate(final Bundle bundle) {
-        super.onCreate(bundle);
-        (this.mAssistGestureHelper = new AssistGestureHelper(this.getApplicationContext()))
-                .setListener(this);
-        this.mLaunchedFrom = this.getIntent().getStringExtra("launched_from");
-    }
-
-    @Override
-    public abstract void onGestureDetected();
-
-    @Override
-    public abstract void onGestureProgress(final float p0, final int p1);
-
-    public void onPause() {
-        super.onPause();
-        this.mAssistGestureHelper.setListener(null);
-        this.mAssistGestureHelper.unbindFromElmyraServiceProxy();
-    }
-
-    public void onResume() {
-        super.onResume();
-        boolean b;
-        b = Settings.Secure.getInt(this.getContentResolver(), "assist_gesture_enabled", 1) != 0;
-        if (!FeatureFactory.getFactory(this).getAssistGestureFeatureProvider().isSupported(this)) {
-            this.setResult(1);
-            this.finishAndRemoveTask();
-            return;
-        } else if ((!b)) {
-            Log.e("AssistGestureTrainingBase", "Unable to start activity ");
-            this.setResult(1);
-            this.finishAndRemoveTask();
-            return;
-        }
-        this.mAssistGestureHelper.bindToElmyraServiceProxy();
-        this.mAssistGestureHelper.setListener(this);
-    }
+    private WindowManager mWindowManager;
 
     protected class HandleProgress {
-        private final Handler mHandler;
         private boolean mErrorSqueezeBottomShown;
+        private Handler mHandler;
         private int mLastStage;
-        private boolean mShouldCheckForNoProgress;
+        private boolean mShouldCheckForNoProgress = true;
 
-        public HandleProgress(final Handler mHandler) {
-            this.mHandler = mHandler;
-            this.mShouldCheckForNoProgress = true;
+        public HandleProgress(Handler handler) {
+            this.mHandler = handler;
         }
 
-        private boolean checkSqueezeNoProgress(final int n) {
-            return this.mLastStage == 1 && n == 0;
+        public void setShouldCheckForNoProgress(boolean z) {
+            this.mShouldCheckForNoProgress = z;
         }
 
-        private boolean checkSqueezeTooLong(final int n) {
-            return this.mLastStage == 2 && n == 0;
+        private boolean checkSqueezeNoProgress(int i) {
+            return this.mLastStage == 1 && i == 0;
+        }
+
+        private boolean checkSqueezeTooLong(int i) {
+            return this.mLastStage == 2 && i == 0;
+        }
+
+        public void onGestureProgress(float f, int i) {
+            int i2;
+            if (this.mLastStage != i) {
+                if (!this.mShouldCheckForNoProgress || !checkSqueezeNoProgress(i)) {
+                    i2 = checkSqueezeTooLong(i) ? 2 : 0;
+                } else {
+                    i2 = 1;
+                }
+                this.mLastStage = i;
+                if (i2 != 0) {
+                    if (i2 == 1) {
+                        if (this.mErrorSqueezeBottomShown) {
+                            i2 = 4;
+                        }
+                        this.mErrorSqueezeBottomShown = true;
+                    }
+                    this.mHandler.obtainMessage(2, i2, 0).sendToTarget();
+                }
+            }
         }
 
         public void onGestureDetected() {
             this.mLastStage = 0;
         }
+    }
 
-        public void onGestureProgress(final float n, int mLastStage) {
-            int n2 = 0;
-            if (this.mLastStage != mLastStage) {
-                if (this.mShouldCheckForNoProgress && this.checkSqueezeNoProgress(mLastStage)) {
-                    n2 = 1;
-                } else if (this.checkSqueezeTooLong(mLastStage)) {
-                    n2 = 2;
-                }
-                this.mLastStage = mLastStage;
-                if (n2 != 0) {
-                    if ((mLastStage = n2) == 1) {
-                        if (this.mErrorSqueezeBottomShown) {
-                            n2 = 4;
-                        }
-                        this.mErrorSqueezeBottomShown = true;
-                        mLastStage = n2;
-                    }
-                    this.mHandler.obtainMessage(2, mLastStage, 0).sendToTarget();
-                }
-            }
-        }
+    public boolean flowTypeSetup() {
+        return "setup".contentEquals(this.mLaunchedFrom);
+    }
 
-        public void setShouldCheckForNoProgress(final boolean mShouldCheckForNoProgress) {
-            this.mShouldCheckForNoProgress = mShouldCheckForNoProgress;
+    public boolean flowTypeDeferredSetup() {
+        return "deferred_setup".contentEquals(this.mLaunchedFrom);
+    }
+
+    public boolean flowTypeSettingsSuggestion() {
+        return "settings_suggestion".contentEquals(this.mLaunchedFrom);
+    }
+
+    /* access modifiers changed from: protected */
+    public boolean flowTypeAccidentalTrigger() {
+        return "accidental_trigger".contentEquals(this.mLaunchedFrom);
+    }
+
+    @Override
+    public void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+        this.mWindowManager = (WindowManager) getSystemService("window");
+        this.mAssistGestureHelper = new AssistGestureHelper(getApplicationContext());
+        this.mAssistGestureHelper.setListener(this);
+        this.mLaunchedFrom = getIntent().getStringExtra("launched_from");
+        this.mIndicatorView = new AssistGestureIndicatorView(new ContextThemeWrapper(getApplicationContext(), getTheme()));
+    }
+
+    public void onResume() {
+        super.onResume();
+        boolean z = Settings.Secure.getInt(getContentResolver(), "assist_gesture_enabled", 1) != 0;
+        AssistGestureFeatureProvider assistGestureFeatureProvider = FeatureFactory.getFactory(this).getAssistGestureFeatureProvider();
+        WindowManager windowManager = this.mWindowManager;
+        AssistGestureIndicatorView assistGestureIndicatorView = this.mIndicatorView;
+        windowManager.addView(assistGestureIndicatorView, assistGestureIndicatorView.getLayoutParams(getWindow().getAttributes()));
+        this.mAssistGestureHelper.bindToElmyraServiceProxy();
+        this.mAssistGestureHelper.setListener(this);
+        if (!assistGestureFeatureProvider.isSupported(this) || !z) {
+            setResult(1);
+            finishAndRemoveTask();
         }
+    }
+
+    public void onPause() {
+        super.onPause();
+        this.mAssistGestureHelper.setListener(null);
+        this.mAssistGestureHelper.unbindFromElmyraServiceProxy();
+        clearIndicators();
+        this.mWindowManager.removeView(this.mIndicatorView);
+    }
+
+    public void onApplyThemeResource(Resources.Theme theme, int i, boolean z) {
+        theme.applyStyle(R.style.SetupWizardPartnerResource, true);
+        super.onApplyThemeResource(theme, i, z);
+    }
+
+    public void onGestureProgress(float f, int i) {
+        this.mIndicatorView.onGestureProgress(f);
+    }
+
+    public void clearIndicators() {
+        this.mIndicatorView.onGestureProgress(0.0f);
+    }
+
+    public void fadeIndicators() {
+        this.mIndicatorView.onGestureDetected();
+    }
+
+    public void handleDoneAndLaunch() {
+        setResult(-1);
+        this.mAssistGestureHelper.setListener(null);
+        this.mAssistGestureHelper.launchAssistant();
+        finishAndRemoveTask();
+    }
+
+    public void launchAssistGestureSettings() {
+        startActivity(new Intent("android.settings.ASSIST_GESTURE_SETTINGS"));
     }
 }
 

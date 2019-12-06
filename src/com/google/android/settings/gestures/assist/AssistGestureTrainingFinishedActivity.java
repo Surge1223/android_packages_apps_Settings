@@ -61,7 +61,7 @@ public class AssistGestureTrainingFinishedActivity extends AssistGestureTraining
         return R.layout.assist_gesture_training_finished_activity;
     }
 
-    protected void onCreate(Bundle bundle) {
+    public void onCreate(Bundle bundle) {
         setTheme(SetupWizardUtils.getTheme(getIntent()));
         setContentView(getContentView());
         super.onCreate(bundle);
